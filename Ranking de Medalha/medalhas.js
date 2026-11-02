@@ -39,38 +39,37 @@ window.MEDALHAS = {
     { id:"TIME 7", nome:"INTERIOR", imagem:"" }
   ],
 
-  // ===== RESULTADOS POR MODALIDADE =====
-  // Substitua estes EXEMPLOS pelos vencedores reais.
-  // Cada modalidade distribui 1 ouro, 1 prata e 1 bronze.
-  // Para indicar medalhas ainda não definidas, deixe o valor vazio: "".
-  // Para adicionar esporte, copie uma linha e altere o nome e os vencedores.
+  // Informe o nome da equipe ou seu ID (ex.: "CATEDRAL" ou "TIME 1").
+  // Ambos são reconhecidos como a mesma equipe.
+  // Preencha bronze quando o terceiro lugar for definido; a pontuação e o pódio atualizam automaticamente.
+  // Exemplo: { ouro: "CATEDRAL", prata: "SUL", bronze: "NORTE" }.
   modalidades: {
-      "Atletismo 100m - Feminino":       { "ouro": "", "prata": ""},
-      "Atletismo 100m - Masculino":      { "ouro": "", "prata": ""},
-      "Atletismo 200m - Feminino":       { "ouro": "", "prata": ""},
-      "Atletismo 200m - Masculino":      { "ouro": "", "prata": ""},
-      "Atletismo 400m - Feminino":       { "ouro": "", "prata": ""},
-      "Atletismo 400m - Masculino":      { "ouro": "", "prata": ""},
-      "Basquete 3x3 - Feminino":         { "ouro": "", "prata": ""},
-      "Basquete 3x3 - Masculino":        { "ouro": "", "prata": ""},
-      "Futevôlei - Feminino":            { "ouro": "", "prata": ""},
-      "Futevôlei - Masculino":           { "ouro": "", "prata": ""},
-      "Futsal - Feminino":               { "ouro": "", "prata": ""},
-      "Futsal - Masculino":              { "ouro": "", "prata": ""},
-      "Jiu-Jitsu - Feminino":            { "ouro": "", "prata": ""},
-      "Jiu-Jitsu - Masculino":           { "ouro": "", "prata": ""},
-      "Natação - Feminino":              { "ouro": "CATEDRAL", "prata": "SUL"},
-      "Natação - Masculino":             { "ouro": "SUL", "prata":"CATEDRAL"},
-      "Queimada":                        { "ouro": "", "prata": ""},
-      "Revezamento - Feminino":          { "ouro": "", "prata": ""},
-      "Revezamento - Masculino":         { "ouro": "", "prata": ""},
-      "Tênis de Mesa - Feminino":        { "ouro": "", "prata": ""},
-      "Tênis de Mesa - Masculino":       { "ouro": "", "prata": ""},
-      "Vôlei de Areia - Feminino":       { "ouro": "", "prata": ""},
-      "Vôlei de Areia - Masculino":      { "ouro": "", "prata": ""},
-      "Vôlei de Quadra - Feminino":      { "ouro": "", "prata": ""},
-      "Vôlei de Quadra - Masculino":     { "ouro": "", "prata": ""},
-      "Xadrez - Feminino":               { "ouro": "", "prata": ""},
-      "Xadrez - Masculino":              { "ouro": "", "prata": ""}
+      "Atletismo 100m - Feminino":       { ouro: "", prata: "", bronze: "" },
+      "Atletismo 100m - Masculino":      { ouro: "", prata: "", bronze: "" },
+      "Atletismo 200m - Feminino":       { ouro: "", prata: "", bronze: "" },
+      "Atletismo 200m - Masculino":      { ouro: "", prata: "", bronze: "" },
+      "Atletismo 400m - Feminino":       { ouro: "", prata: "", bronze: "" },
+      "Atletismo 400m - Masculino":      { ouro: "", prata: "", bronze: "" },
+      "Basquete 3x3 - Feminino":         { ouro: "", prata: "", bronze: "" },
+      "Basquete 3x3 - Masculino":        { ouro: "", prata: "", bronze: "" },
+      "Futevôlei - Feminino":            { ouro: "", prata: "", bronze: "" },
+      "Futevôlei - Masculino":           { ouro: "", prata: "", bronze: "" },
+      "Futsal - Feminino":               { ouro: "", prata: "", bronze: "" },
+      "Futsal - Masculino":              { ouro: "", prata: "", bronze: "" },
+      "Jiu-Jitsu - Feminino":            { ouro: "", prata: "", bronze: "" },
+      "Jiu-Jitsu - Masculino":           { ouro: "", prata: "", bronze: "" },
+      "Natação - Feminino":              { ouro: "CATEDRAL", prata: "SUL", bronze: "" },
+      "Natação - Masculino":             { ouro: "SUL", prata: "CATEDRAL", bronze: "" },
+      "Queimada":                        { ouro: "", prata: "", bronze: "" },
+      "Revezamento - Feminino":          { ouro: "", prata: "", bronze: "" },
+      "Revezamento - Masculino":         { ouro: "", prata: "", bronze: "" },
+      "Tênis de Mesa - Feminino":        { ouro: "", prata: "", bronze: "" },
+      "Tênis de Mesa - Masculino":       { ouro: "", prata: "", bronze: "" },
+      "Vôlei de Areia - Feminino":       { ouro: "", prata: "", bronze: "" },
+      "Vôlei de Areia - Masculino":      { ouro: "", prata: "", bronze: "" },
+      "Vôlei de Quadra - Feminino":      { ouro: "", prata: "", bronze: "" },
+      "Vôlei de Quadra - Masculino":     { ouro: "", prata: "", bronze: "" },
+      "Xadrez - Feminino":               { ouro: "", prata: "", bronze: "" },
+      "Xadrez - Masculino":              { ouro: "", prata: "", bronze: "" }
   }
 };
