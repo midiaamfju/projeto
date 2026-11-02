@@ -47,7 +47,7 @@ window.MEDALHAS = {
     "Atletismo 100m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
     "Atletismo 100m - Masculino": { ouro: "OESTE", prata: "NOROESTE" },
     "Atletismo 200m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
-    "Atletismo 200m - Masculino": { ouro: "OESTE", prata: "NOROESTE" },
+    "Atletismo 200m - Masculino": { ouro: "SUL", prata: "OESTE" },
     "Atletismo 400m - Feminino": { ouro: "", prata: "" },
     "Atletismo 400m - Masculino": { ouro: "NOROESTE", prata: "NORTE" },
     "Basquete 3x3 - Feminino": { ouro: "", prata: "" },
