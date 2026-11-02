@@ -66,3 +66,13 @@ Manager: https://vdo.ninja/?director=tenisdemesa
 Participante: https://vdo.ninja/?room=tenisdemesa
 Cena OBS/site: https://vdo.ninja/?scene=0&room=tenisdemesa
 Modalidades com categorias Feminino/Masculino do mesmo esporte compartilham a sala de transmissão.
+
+
+TESTE DA CÂMERA NO CELULAR (V18)
+1. No computador, abra Transmissões e selecione a mesma modalidade.
+2. Copie o convite de participante e abra no navegador do celular (Chrome ou Safari).
+3. Autorize câmera/microfone, selecione a câmera e TOQUE em iniciar/entrar/compartilhar no VDO.Ninja. Apenas abrir o link NÃO inicia a transmissão.
+4. No computador, abra primeiro a opção "Abrir câmeras fora do site". Se aparecer lá, mas não dentro do site, existe um bloqueio de reprodução ou iframe do navegador/hospedagem.
+5. Se não aparecer no VDO.Ninja direto, confira que o identificador room é igual em ambos links, a conexão está ativa e as permissões foram concedidas. Use a sala do diretor para ver se o convidado entrou.
+6. Se o site estiver no GitHub Pages, publique todos os arquivos V18 (especialmente transmissoes.js e index.html) e atualize a página com Ctrl+F5.
+Nota: o site não recebe o vídeo em servidor próprio. A grade embute uma cena do VDO.Ninja. Sem teste real não é possível garantir conectividade nas redes/dispositivos dos convidados.

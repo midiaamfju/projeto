@@ -24,7 +24,7 @@
   function links(nome) {
     const room = salaId(nome);
     return {
-      convidado: url({room}),
+      convidado: url({room, mobile: 1}),
       obs: url({scene:0,room}),
       diretor: url({director:room})
     };
@@ -45,11 +45,12 @@
     $("linkDiretor").value=l.diretor;
     $("abrirConvite").href=l.convidado;
     $("abrirDiretor").href=l.diretor;
+    $("abrirCena").href=l.obs;
     roomFrame.replaceChildren();
     const frame=document.createElement("iframe");
     frame.src=l.obs;
     frame.title=`Câmeras conectadas — ${nome}`;
-    frame.allow="autoplay;fullscreen;microphone;camera;display-capture";
+    frame.allow="autoplay; fullscreen; microphone; camera; display-capture";
     frame.referrerPolicy="strict-origin-when-cross-origin";
     frame.loading="eager";
     roomFrame.append(frame);
