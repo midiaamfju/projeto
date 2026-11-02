@@ -5,6 +5,7 @@ let timer = null;
 let primeira = true;
 let modalidadeSelecionada = "todos";
 let dadosAtuais = null;
+let avisosCadastro = [];
 
 /* ---------- utilidades ---------- */
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -259,6 +260,7 @@ function medalhasPorModalidade(dados) {
   const modalidades = dados.modalidades || {};
   const equipes = new Map();
   const apelidos = new Map();
+  avisosCadastro = [];
 
   // Um único registro por equipe. "TIME 1" e "CATEDRAL" apontam para a mesma equipe.
   for (const t of (dados.times || [])) {
@@ -275,9 +277,7 @@ function medalhasPorModalidade(dados) {
     }
   }
 
-  const vencedores = {};
   for (const [esporte, resultado] of Object.entries(modalidades)) {
-    vencedores[esporte] = new Set();
     for (const cor of ["ouro", "prata", "bronze"]) {
       const nomeInformado = String(resultado?.[cor] || "").trim();
       if (!nomeInformado) continue;
@@ -288,9 +288,8 @@ function medalhasPorModalidade(dados) {
         if (!equipes.has(id)) equipes.set(id, { id:nomeInformado, nome:nomeInformado, imagem:"", ouro:0, prata:0, bronze:0, total:0 });
         apelidos.set(chave, id);
       }
-      if (vencedores[esporte].has(id))
-        throw new Error(`Em ${esporte}, a equipe ${nomeInformado} foi indicada em mais de uma medalha.`);
-      vencedores[esporte].add(id);
+      // Uma equipe pode conquistar ouro e prata (ou bronze) na mesma modalidade.
+      // Cada campo preenchido representa uma medalha independente.
       if (modalidadeSelecionada === "todos" || esporte === modalidadeSelecionada) {
         const equipe = equipes.get(id);
         equipe[cor]++;
@@ -330,6 +329,9 @@ function render(dados) {
   dadosAtuais = dados;
   atualizarSeletor(dados);
   const lista_ = dados.modalidades ? medalhasPorModalidade(dados) : (dados.times || dados.paises || []);
+  const aviso = $("avisoCadastro");
+  aviso.hidden = !avisosCadastro.length;
+  aviso.textContent = avisosCadastro.join(" ");
   const ordenados = [...lista_].sort((a, b) =>
     ((b.ouro ?? 0) - (a.ouro ?? 0)) || ((b.prata ?? 0) - (a.prata ?? 0)) || ((b.bronze ?? 0) - (a.bronze ?? 0)) ||
     String(a.nome).localeCompare(String(b.nome),"pt-BR"));
