@@ -208,15 +208,9 @@ function atualizarDestaques(ordenados) {
     if (anterior !== valor) contar(el, anterior, valor);
     el.dataset.value = valor;
   }
-  // Somente equipes com medalhas podem ocupar o pódio.
-  // A seleção de modalidades continua visível mesmo sem resultados.
-  const comMedalhas = ordenados.filter(p =>
-    Number(p.total ?? (Number(p.ouro || 0) + Number(p.prata || 0) + Number(p.bronze || 0))) > 0
-  );
-  $("statLider").textContent = comMedalhas[0]?.nome || "—";
+  $("statLider").textContent = ordenados[0]?.nome || "—";
   const podio = $("podio");
-  podio.hidden = comMedalhas.length === 0;
-  const destacados = [comMedalhas[1], comMedalhas[0], comMedalhas[2]];
+  const destacados = [ordenados[1], ordenados[0], ordenados[2]];
   const nomes = ["PRATA", "OURO", "BRONZE"];
   const posicoes = [2, 1, 3];
   const chaves = destacados.map(p => p ? String(p.id || p.codigo || p.nome) : "").join("|");
@@ -263,32 +257,48 @@ function atualizarDestaques(ordenados) {
 function chaveTime(v) { return String(v || "").trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR"); }
 function medalhasPorModalidade(dados) {
   const modalidades = dados.modalidades || {};
-  const cadastro = new Map();
-  for (const t of (dados.times || [])) cadastro.set(chaveTime(t.id || t.nome), {...t, ouro:0, prata:0, bronze:0, total:0});
+  const equipes = new Map();
+  const apelidos = new Map();
+
+  // Um único registro por equipe. "TIME 1" e "CATEDRAL" apontam para a mesma equipe.
+  for (const t of (dados.times || [])) {
+    const id = chaveTime(t.id || t.nome);
+    if (!id) continue;
+    if (!equipes.has(id)) equipes.set(id, { ...t, ouro:0, prata:0, bronze:0, total:0 });
+    for (const alias of [t.id, t.nome]) {
+      const chave = chaveTime(alias);
+      if (chave) {
+        if (apelidos.has(chave) && apelidos.get(chave) !== id)
+          throw new Error(`O nome/ID "${alias}" está cadastrado para mais de uma equipe.`);
+        apelidos.set(chave, id);
+      }
+    }
+  }
+
   const vencedores = {};
   for (const [esporte, resultado] of Object.entries(modalidades)) {
     vencedores[esporte] = new Set();
     for (const cor of ["ouro", "prata", "bronze"]) {
-      const ganhador = String(resultado?.[cor] || "").trim();
-      if (!ganhador) continue;
-      const id = chaveTime(ganhador);
-      if (vencedores[esporte].has(id)) throw new Error(`Em ${esporte}, o time ${ganhador} aparece em mais de uma medalha.`);
+      const nomeInformado = String(resultado?.[cor] || "").trim();
+      if (!nomeInformado) continue;
+      const chave = chaveTime(nomeInformado);
+      let id = apelidos.get(chave);
+      if (!id) {
+        id = chave;
+        if (!equipes.has(id)) equipes.set(id, { id:nomeInformado, nome:nomeInformado, imagem:"", ouro:0, prata:0, bronze:0, total:0 });
+        apelidos.set(chave, id);
+      }
+      if (vencedores[esporte].has(id))
+        throw new Error(`Em ${esporte}, a equipe ${nomeInformado} foi indicada em mais de uma medalha.`);
       vencedores[esporte].add(id);
-      if (!cadastro.has(id)) cadastro.set(id, {id:ganhador,nome:ganhador,ouro:0,prata:0,bronze:0,total:0});
+      if (modalidadeSelecionada === "todos" || esporte === modalidadeSelecionada) {
+        const equipe = equipes.get(id);
+        equipe[cor]++;
+        equipe.total++;
+      }
     }
   }
-  const times = [...cadastro.values()].map(t => ({...t, ouro:0,prata:0,bronze:0,total:0}));
-  const porChave = new Map(times.map(t => [chaveTime(t.id || t.nome),t]));
-  for (const [esporte, resultado] of Object.entries(modalidades)) {
-    if (modalidadeSelecionada !== "todos" && esporte !== modalidadeSelecionada) continue;
-    for (const cor of ["ouro","prata","bronze"]) {
-      const id = chaveTime(resultado?.[cor]);
-      if (!id) continue;
-      const time = porChave.get(id);
-      if (time) {time[cor]++;time.total++;}
-    }
-  }
-  return times.filter(t => modalidadeSelecionada === "todos" || t.total > 0);
+  return [...equipes.values()].filter(t => modalidadeSelecionada === "todos" || t.total > 0);
 }
 function atualizarSeletor(dados) {
   const seletor = $("modalidadeSelect");
@@ -323,6 +333,11 @@ function render(dados) {
   const ordenados = [...lista_].sort((a, b) =>
     ((b.ouro ?? 0) - (a.ouro ?? 0)) || ((b.prata ?? 0) - (a.prata ?? 0)) || ((b.bronze ?? 0) - (a.bronze ?? 0)) ||
     String(a.nome).localeCompare(String(b.nome),"pt-BR"));
+
+  // A coluna Bronze é exibida apenas se a seleção atual tiver bronze cadastrado.
+  // "Todas as modalidades": considera qualquer bronze já atribuído.
+  const temBronze = ordenados.some(equipe => Number(equipe.bronze || 0) > 0);
+  document.body.classList.toggle("sem-bronze", !temBronze);
 
   atualizarDestaques(ordenados);
   const lista = $("lista");
