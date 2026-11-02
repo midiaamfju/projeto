@@ -1934,3 +1934,20 @@ body.sem-bronze .linha .nums {grid-template-columns:repeat(3,64px)}
 
 /* V15 — sala de reunião responsiva por modalidade */
 .sala-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:22px 0 15px;flex-wrap:wrap}.sala-cabecalho h3{font:900 clamp(1.7rem,3vw,2.5rem) 'Barlow Condensed',sans-serif;margin:7px 0}.sala-cabecalho p{color:#cbbdd8;font-size:.85rem;max-width:660px;line-height:1.5}.sala-estado{padding:10px 14px;background:#ffb45314;border:1px solid #ffb45350;border-radius:20px;display:flex;gap:10px;align-items:center;font-size:.72rem;font-weight:800}.sala-grade{width:100%;aspect-ratio:16/9;min-height:230px;background:#0b0715;border:1px solid #ffffff35;border-radius:17px;overflow:hidden;position:relative;box-shadow:0 20px 45px #0006}.sala-grade iframe{position:absolute;inset:0;border:0;width:100%;height:100%}.sala-vazia{display:grid;place-content:center;text-align:center;height:100%;color:#b2a5bd}.sala-vazia span{font-size:3rem}.sala-legenda{font-size:.78rem;color:#bfb1d0;line-height:1.5;margin:10px 0 23px}.sala-acoes{display:grid;gap:14px}.sala-link{background:#ffffff0d;border:1px solid #ffffff20;padding:16px;border-radius:13px}.sala-link label{display:block;color:#e3d2ee;font-size:.7rem;font-weight:900;letter-spacing:.1em;margin-bottom:10px}.sala-link>div{display:flex;gap:9px}.sala-link input{flex:1;min-width:0;background:#100919;color:#eee;border:1px solid #ffffff35;padding:12px;border-radius:9px;font:500 .77rem ui-monospace,monospace}.sala-links-externos{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:20px}.sala-links-externos a{color:#ffc77e;text-decoration:none;font-weight:700;font-size:.82rem}.sala-links-externos a:hover{text-decoration:underline}@media(max-width:520px){.sala-link>div{flex-direction:column}.sala-grade{min-height:200px}}
+
+/* V21 — o pódio acomoda todas as equipes empatadas no top 3. */
+.podio{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:15px}
+.podio-item{flex:1 1 230px;max-width:365px}
+@media(max-width:520px){.podio{gap:8px}.podio-item{flex:1 1 130px;min-width:0}}
+
+/* V22: tres blocos originais, empates agrupados dentro da mesma colocacao */
+.podio{display:grid;grid-template-columns:1fr 1.14fr 1fr;gap:15px;align-items:stretch}
+.podio-item{width:auto;min-width:0;max-width:none;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between}
+.podio-equipes{display:flex;flex-direction:column;justify-content:center;gap:13px;flex:1;margin:10px 0}
+.podio-equipe{display:flex;flex-direction:column;align-items:center;min-width:0}
+.podio-equipe+.podio-equipe{border-top:1px solid #ffffff29;padding-top:13px}
+.podio-equipe .podio-escudo{margin:5px auto 9px}
+.podio-equipe .podio-total{margin-top:6px}
+.podio-vazio{font-weight:700;color:#bcaec9;padding:28px 0}
+.podio-item .podio-medalha{margin-top:auto;padding-top:10px}
+@media(max-width:520px){.podio{display:grid;grid-template-columns:1fr 1.14fr 1fr;gap:5px}.podio-item{min-width:0;padding:12px 5px}.podio-equipes{gap:9px}.podio-equipe+.podio-equipe{padding-top:9px}.podio-equipe .podio-nome{font-size:clamp(.72rem,2.7vw,1.05rem)}.podio-equipe .podio-total{font-size:.5rem}.podio-equipe .podio-escudo{width:38px;height:38px}.podio-1 .podio-equipe .podio-escudo{width:45px;height:45px}}

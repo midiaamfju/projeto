@@ -96,3 +96,7 @@ VERSÃO 20 — SINCRONIZAÇÃO INDEPENDENTE
 - A cena pode ser atualizada manualmente pelo botão Recarregar grade.
 - É necessário publicar medalhas.js atualizado no mesmo local do site.
 - Ao abrir diretamente pelo file://, a atualização depende do navegador e dos arquivos locais.
+
+V21: Empates completos (ouro, prata e bronze iguais) compartilham a mesma colocação (1º, 1º, 3º). O pódio reflete as posições empatadas. Resultados atualizados com a lista enviada.
+
+V23: Empates por classificacao densa (1, 2, 2, 3, 4), sem pular posicoes. O podio mostra nomes empatados no mesmo bloco.

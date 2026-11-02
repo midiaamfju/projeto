@@ -209,46 +209,65 @@ function atualizarDestaques(ordenados) {
     if (anterior !== valor) contar(el, anterior, valor);
     el.dataset.value = valor;
   }
-  $("statLider").textContent = ordenados[0]?.nome || "—";
+  const lideres = ordenados.filter(p => p.posicao === 1);
+  $("statLider").textContent = lideres.length ? lideres.map(p => p.nome).join(" · ") : "—";
   const podio = $("podio");
-  const destacados = [ordenados[1], ordenados[0], ordenados[2]];
-  const nomes = ["PRATA", "OURO", "BRONZE"];
-  const posicoes = [2, 1, 3];
-  const chaves = destacados.map(p => p ? String(p.id || p.codigo || p.nome) : "").join("|");
+  // Sempre tres blocos (prata, ouro, bronze). Empatados compartilham um unico bloco.
+  const grupos = [2, 1, 3].map(posicao => ({
+    posicao,
+    equipes: ordenados.filter(p => p.posicao === posicao && p.total > 0)
+  }));
+  const chaves = JSON.stringify(grupos.map(g => [g.posicao, g.equipes.map(p => [p.id || p.nome, p.nome, p.total, urlImagem(p)])]));
   if (podio.dataset.equipes !== chaves) {
     podio.dataset.equipes = chaves;
     podio.replaceChildren();
-    destacados.forEach((p, index) => {
-      if (!p) return;
+    grupos.forEach((grupo, index) => {
+      const {posicao, equipes} = grupo;
       const item = document.createElement("article");
-      item.className = `podio-item podio-${posicoes[index]}`;
+      item.className = `podio-item podio-${posicao}`;
       item.style.setProperty("--ordem", index);
       const rotulo = document.createElement("div");
       rotulo.className = "podio-coroa";
-      rotulo.textContent = posicoes[index] === 1 ? "★ LÍDER DA COMPETIÇÃO" : `${posicoes[index]}º LUGAR`;
-      const imagem = document.createElement("div"); imagem.className = "podio-escudo";
-      const src = urlImagem(p);
-      if (src) {
-        const img = document.createElement("img"); img.alt = ""; img.src = src;
-        img.onerror = () => { imagem.textContent = iniciais(p.nome); };
-        imagem.appendChild(img);
-      } else imagem.textContent = iniciais(p.nome);
-      const nome = document.createElement("div"); nome.className = "podio-nome"; nome.textContent = p.nome;
-      const badge = document.createElement("div"); badge.className = "podio-medalha";
-      const imgMedalha = document.createElement("img");
-      imgMedalha.className="podio-medalha-img";
-      imgMedalha.src=`img/medalhas/${["prata","ouro","bronze"][index]}.webp`;
-      imgMedalha.alt=nomes[index];
-      badge.append(imgMedalha,document.createTextNode(` ${posicoes[index]}º LUGAR`));
-      const pontos = document.createElement("div"); pontos.className = "podio-total";
-      pontos.textContent = `${p.total ?? ((p.ouro || 0) + (p.prata || 0) + (p.bronze || 0))} MEDALHAS`;
-      item.append(rotulo, imagem, nome, badge, pontos);
+      rotulo.textContent = posicao === 1 ? "★ LIDERANÇA DA COMPETIÇÃO" : `${posicao}º LUGAR`;
+      const pessoas = document.createElement("div");
+      pessoas.className = "podio-equipes";
+      if (!equipes.length) {
+        const vazio = document.createElement("div");
+        vazio.className = "podio-vazio";
+        vazio.textContent = "A definir";
+        pessoas.appendChild(vazio);
+      }
+      equipes.forEach(p => {
+        const equipe = document.createElement("div");
+        equipe.className = "podio-equipe";
+        const imagem = document.createElement("div");
+        imagem.className = "podio-escudo";
+        const src = urlImagem(p);
+        if (src) {
+          const img = document.createElement("img");
+          img.alt = "";
+          img.src = src;
+          img.onerror = () => { imagem.replaceChildren(document.createTextNode(iniciais(p.nome))); };
+          imagem.appendChild(img);
+        } else imagem.textContent = iniciais(p.nome);
+        const nome = document.createElement("div");
+        nome.className = "podio-nome";
+        nome.textContent = p.nome;
+        const pontos = document.createElement("div");
+        pontos.className = "podio-total";
+        pontos.textContent = `${p.total} MEDALHAS`;
+        equipe.append(imagem, nome, pontos);
+        pessoas.appendChild(equipe);
+      });
+      const badge = document.createElement("div");
+      badge.className = "podio-medalha";
+      const medalha = document.createElement("img");
+      medalha.className = "podio-medalha-img";
+      medalha.src = `img/medalhas/${["ouro","prata","bronze"][posicao-1]}.webp`;
+      medalha.alt = `${posicao}º lugar`;
+      badge.append(medalha, document.createTextNode(` ${posicao}º LUGAR`));
+      item.append(rotulo, pessoas, badge);
       podio.appendChild(item);
-    });
-  } else {
-    [...podio.children].forEach((item, i) => {
-      const p = destacados[i];
-      if (p) item.querySelector(".podio-total").textContent = `${p.total ?? ((p.ouro || 0) + (p.prata || 0) + (p.bronze || 0))} MEDALHAS`;
     });
   }
   $("ultimaAtualizacao").textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" })}`;
@@ -338,6 +357,17 @@ function render(dados) {
   const ordenados = [...lista_].sort((a, b) =>
     ((b.ouro ?? 0) - (a.ouro ?? 0)) || ((b.prata ?? 0) - (a.prata ?? 0)) || ((b.bronze ?? 0) - (a.bronze ?? 0)) ||
     String(a.nome).localeCompare(String(b.nome),"pt-BR"));
+
+  // Classificação de competição: totais idênticos de ouro/prata/bronze = mesma posição.
+  // Ranking denso: 1º, 2º, 2º, 3º, 4º. Ordem alfabética somente organiza visualmente os empatados.
+  let ultimaPontuacao = null;
+  let ultimaPosicao = 0;
+  ordenados.forEach((equipe, indice) => {
+    const pontuacao = [Number(equipe.ouro || 0), Number(equipe.prata || 0), Number(equipe.bronze || 0)].join("/");
+    if (pontuacao !== ultimaPontuacao) ultimaPosicao += 1;
+    equipe.posicao = ultimaPosicao;
+    ultimaPontuacao = pontuacao;
+  });
 
   // A coluna Bronze é exibida apenas se a seleção atual tiver bronze cadastrado.
   // "Todas as modalidades": considera qualquer bronze já atribuído.
