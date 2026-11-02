@@ -63,7 +63,7 @@ window.MEDALHAS = {
       "Queimada":                        { ouro: "NORTE", prata: "LESTE"},
       "Revezamento - Feminino":          { ouro: "", prata: ""},
       "Revezamento - Masculino":         { ouro: "", prata: ""},
-      "Tênis de Mesa - Feminino":        { ouro: "LESTE", prata: "LESTE"},
+      "Tênis de Mesa - Feminino":        { ouro: "LESTE", prata: ""},
       "Tênis de Mesa - Masculino":       { ouro: "", prata: ""},
       "Vôlei de Areia - Feminino":       { ouro: "", prata: ""},
       "Vôlei de Areia - Masculino":      { ouro: "", prata: ""},
