@@ -86,3 +86,13 @@ VERSÃO 19 — AJUSTES DE SALA E ATUALIZAÇÃO
 - O ranking só faz novas leituras em Home. Ao abrir Transmissões, o timer é suspenso e a cena em iframe permanece estável; ao voltar à Home, os dados são atualizados novamente.
 - Se o participante não aparecer no Manager, confirme que ele tocou em Iniciar no VDO.Ninja e abriu o link com room=, não link individual push=.
 - GitHub Pages: reenvie index.html, script.js, transmissoes.js e limpe o cache (Ctrl+F5).
+
+
+VERSÃO 20 — SINCRONIZAÇÃO INDEPENDENTE
+- O arquivo medalhas.js é consultado a cada atualizarSegundos tanto na Home quanto na aba Transmissões.
+- Na Transmissão, isso atualiza somente a lista de modalidades. A cena WebRTC NÃO é reiniciada.
+- Links Manager/Participante/OBS permanecem estáveis enquanto a modalidade selecionada não mudar.
+- Se o esporte selecionado for retirado do cadastro, o sistema passa para a primeira modalidade disponível.
+- A cena pode ser atualizada manualmente pelo botão Recarregar grade.
+- É necessário publicar medalhas.js atualizado no mesmo local do site.
+- Ao abrir diretamente pelo file://, a atualização depende do navegador e dos arquivos locais.

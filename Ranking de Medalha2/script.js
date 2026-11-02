@@ -374,32 +374,39 @@ function render(dados) {
   });
 }
 
-/* ---------- carregar JSON ---------- */
+/* ---------- sincronização dos dados, independente da transmissão ---------- */
+let carregamentoEmAndamento = false;
 async function carregar() {
-  if (window.esporteJovemTransmissaoAtiva) { clearTimeout(timer); return; }
+  if (carregamentoEmAndamento) return;
+  carregamentoEmAndamento = true;
+  clearTimeout(timer);
+  let intervalo = 15000;
   try {
     const dados = await lerDados();
+    dadosAtuais = dados;
+    const modalidades = Object.keys(dados.modalidades || {});
+    // A lista de modalidades é sincronizada até durante a transmissão.
+    window.dispatchEvent(new CustomEvent("esportejovem:dados", { detail: { modalidades } }));
     $("erro").hidden = true;
 
-    if (primeira) {                       // 1ª carga: toca a intro e só então mostra o quadro
+    if (primeira) {
       primeira = false;
-      aplicarConfig(dados.config);
-      await intro(dados.config);
+      aplicarConfig(dados.config || {});
+      await intro(dados.config || {});
     }
-    if (window.esporteJovemTransmissaoAtiva) { clearTimeout(timer); return; }
-    render(dados);
-
-    clearTimeout(timer);
-    const s = Number(dados.config?.atualizarSegundos) || 0;
-    if (s > 0 && !window.esporteJovemTransmissaoAtiva) timer = setTimeout(carregar, s * 1000);
-  } catch (e) {
+    // A Home pode atualizar estatísticas; nunca mexer no iframe enquanto a transmissão estiver aberta.
+    if (!window.esporteJovemTransmissaoAtiva) render(dados);
+    const segundos = Number(dados.config?.atualizarSegundos);
+    intervalo = Number.isFinite(segundos) && segundos > 0 ? Math.max(5, segundos) * 1000 : 0;
+  } catch(e) {
     if (primeira) { primeira = false; await intro({}); }
     const erro = $("erro");
     erro.hidden = false;
     erro.textContent = `Erro ao carregar ${ARQUIVO}: ${e.message}`;
     console.error(e);
-    clearTimeout(timer);
-    if (!window.esporteJovemTransmissaoAtiva) timer = setTimeout(carregar, 15000);
+  } finally {
+    carregamentoEmAndamento = false;
+    if(intervalo) timer = setTimeout(carregar, intervalo);
   }
 }
 carregar();

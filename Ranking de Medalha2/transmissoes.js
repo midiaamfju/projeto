@@ -65,7 +65,9 @@
     modalidades=novas.slice();select.replaceChildren();
     modalidades.forEach(nome=>select.add(new Option(nome,nome)));
     select.value=modalidades.includes(atual)?atual:modalidades[0];
-    if(!live.hidden) desenhar();
+    // A lista pode mudar sem regenerar URLs nem reiniciar a câmera já ativa.
+    // Só mudar de sala quando a seleção anterior deixou de existir.
+    if(!live.hidden && select.value !== atual) desenhar();
   }
   function abrirAba(nome,atualizarHash=true) {
     const isLive=nome==="transmissoes";
@@ -76,12 +78,11 @@
     $("abaTransmissao").setAttribute("aria-selected",String(isLive));
     window.esporteJovemTransmissaoAtiva = isLive;
     if (isLive) {
-      if (typeof timer !== "undefined") clearTimeout(timer);
       desenhar();
     } else {
       roomFrame.replaceChildren();
       salaCarregada = "";
-      if (typeof carregar === "function") carregar();
+      if (typeof render === "function" && typeof dadosAtuais !== "undefined" && dadosAtuais) render(dadosAtuais);
     }
     if(atualizarHash)history.replaceState(null,"",location.pathname+location.search+"#"+(isLive?"transmissoes":"home"));
   }
