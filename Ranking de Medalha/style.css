@@ -1893,3 +1893,21 @@ body {
 .podio-medalha{display:flex;justify-content:center;align-items:center;gap:7px}
 .podio-medalha-img{width:37px;height:37px;object-fit:contain;filter:drop-shadow(0 5px 8px #0005)}
 @media(max-width:760px){.section-kicker{flex-wrap:wrap;gap:10px}.section-kicker>i{min-width:10px}.modalidade-select-wrap{width:100%;justify-content:space-between}.modalidade-select-wrap select{min-width:0;width:min(62%,230px)}.podio-medalha-img{width:29px;height:29px}}
+
+/* V10 — Ocultar a coluna de bronze quando não houver bronze na modalidade selecionada.
+   O ouro, a prata e o total permanecem alinhados. */
+body.sem-bronze .faixa .cols .medalha-imagem[alt="Bronze"],
+body.sem-bronze .linha .nums > .b {display:none !important}
+body.sem-bronze .faixa .cols,
+body.sem-bronze .linha .nums {grid-template-columns:repeat(3,64px)}
+@media(max-width:760px){
+ body.sem-bronze .faixa .cols, body.sem-bronze .linha .nums{grid-template-columns:repeat(3,46px)}
+}
+@media(max-width:520px){
+ body.sem-bronze .faixa .cols, body.sem-bronze .linha .nums{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.sem-bronze .faixa{grid-template-columns:minmax(0,1fr) 145px}
+ body.sem-bronze .linha{grid-template-columns:19px minmax(0,1fr) 145px}
+}
+
+/* Aviso de cadastro inconsistente, sem interromper o quadro */
+#avisoCadastro{margin:12px 0;padding:12px 16px;border:1px solid #ffca6c99;background:#ffb74b16;border-radius:12px;color:#ffe4aa;font-size:.85rem;font-weight:650;line-height:1.5}

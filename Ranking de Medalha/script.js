@@ -290,6 +290,8 @@ function medalhasPorModalidade(dados) {
       }
       // Uma equipe pode conquistar ouro e prata (ou bronze) na mesma modalidade.
       // Cada campo preenchido representa uma medalha independente.
+      // Ex.: ouro: "LESTE", prata: "LESTE" soma 1 ouro + 1 prata para LESTE,
+      // inclusive no ranking geral (modalidade "todos").
       if (modalidadeSelecionada === "todos" || esporte === modalidadeSelecionada) {
         const equipe = equipes.get(id);
         equipe[cor]++;

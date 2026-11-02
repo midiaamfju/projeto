@@ -20,3 +20,15 @@ Para adicionar escudo, use o campo "times" (o nome/id deve corresponder ao nome 
 ATENÇÃO: os resultados iniciais com TIME 1, TIME 2 etc. são exemplos fictícios, não resultados oficiais.
 As imagens das medalhas estão em img/medalhas, no formato WEBP.
 A atualização automática permanece configurada em medalhas.js.
+
+V10 — BRONZE CONDICIONAL
+A coluna de bronze só aparece se houver pelo menos um resultado de bronze na modalidade selecionada.
+Em "Todas as modalidades", ela aparece se houver qualquer bronze preenchido.
+Quando não há bronze, o total continua somando ouro e prata normalmente.
+
+VERSÃO 12: o mesmo time pode figurar em ouro, prata e bronze da mesma modalidade; cada medalha é somada separadamente.
+
+V13 - CONQUISTAS MULTIPLAS POR EQUIPE
+A equipe pode ganhar ouro e prata na mesma modalidade. Os dois resultados sao contados no ranking geral e tambem no filtro da modalidade.
+No cadastro atual, LESTE tem 2 ouros e 2 pratas (4 medalhas).
+A classificacao prioriza ouro, depois prata, depois bronze.
