@@ -61,13 +61,13 @@ window.MEDALHAS = {
     "Natação - Feminino": { ouro: "CATEDRAL", prata: "SUL" },
     "Natação - Masculino": { ouro: "SUL", prata: "CATEDRAL" },
     "Queimada": { ouro: "NORTE", prata: "LESTE" },
-    "Revezamento": { ouro: "", prata: "NORTE" },
+    "Revezamento": { ouro: "CATEDRAL", prata: "NORTE" },
     "Tênis de Mesa - Feminino": { ouro: "LESTE", prata: "LESTE" },
     "Tênis de Mesa - Masculino": { ouro: "", prata: "" },
-    "Vôlei de Areia - Feminino": { ouro: "", prata: "" },
-    "Vôlei de Areia - Masculino": { ouro: "", prata: "" },
+    "Vôlei de Areia - Feminino": { ouro: "SUL", prata: "LESTE" },
+    "Vôlei de Areia - Masculino": { ouro: "INTERIOR", prata: "SUL" },
     "Vôlei de Quadra - Feminino": { ouro: "SUL", prata: "CATEDRAL" },
     "Vôlei de Quadra - Masculino": { ouro: "", prata: "" },
-    "Xadrez": { ouro: "LESTE", prata: "SUL" },
+    "Xadrez": { ouro: "LESTE", prata: "SUL" }
   }
 };
