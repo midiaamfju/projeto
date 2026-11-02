@@ -1,0 +1,68 @@
+ESPORTE JOVEM — RANKING POR MODALIDADE
+====================================
+
+1. Extraia o ZIP inteiro e abra index.html.
+2. Abra medalhas.js em um editor de texto (Bloco de Notas, VS Code etc.).
+3. Em "modalidades", escreva os nomes dos times vencedores:
+
+   "Basquete": { ouro:"TIME 1", prata:"TIME 4", bronze:"TIME 6" },
+   "Vôlei":   { ouro:"TIME 2", prata:"TIME 1", bronze:"TIME 5" }
+
+4. Salve e atualize o navegador.
+
+O ranking geral soma todas as medalhas de todas as modalidades.
+Critério de desempate: ouro, depois prata, depois bronze e, persistindo, ordem alfabética.
+O seletor ao lado de DESTAQUES DA COMPETIÇÃO filtra por modalidade.
+Pode deixar uma medalha vazia: ouro:"".
+Para nova modalidade, adicione outra linha ao objeto "modalidades".
+Para adicionar escudo, use o campo "times" (o nome/id deve corresponder ao nome escrito em modalidades).
+
+ATENÇÃO: os resultados iniciais com TIME 1, TIME 2 etc. são exemplos fictícios, não resultados oficiais.
+As imagens das medalhas estão em img/medalhas, no formato WEBP.
+A atualização automática permanece configurada em medalhas.js.
+
+V10 — BRONZE CONDICIONAL
+A coluna de bronze só aparece se houver pelo menos um resultado de bronze na modalidade selecionada.
+Em "Todas as modalidades", ela aparece se houver qualquer bronze preenchido.
+Quando não há bronze, o total continua somando ouro e prata normalmente.
+
+VERSÃO 12: o mesmo time pode figurar em ouro, prata e bronze da mesma modalidade; cada medalha é somada separadamente.
+
+V13 - CONQUISTAS MULTIPLAS POR EQUIPE
+A equipe pode ganhar ouro e prata na mesma modalidade. Os dois resultados sao contados no ranking geral e tambem no filtro da modalidade.
+No cadastro atual, LESTE tem 2 ouros e 2 pratas (4 medalhas).
+A classificacao prioriza ouro, depois prata, depois bronze.
+
+
+VERSÃO 14 — TRANSMISSÕES COM VDO.NINJA / OBS
+1. Abra index.html e selecione a aba TRANSMISSÕES.
+2. Escolha modalidade e quantidade de câmeras (até quatro).
+3. Envie ao participante o link PARA ENVIAR CÂMERA (push).
+4. No OBS: Fontes > + > Navegador > cole o link PARA OBS (RECEPÇÃO) (view).
+5. Ao usar no OBS defina 1280x720 ou 1920x1080 de resolução.
+6. O participante precisa aceitar câmera/microfone e ter conexão de internet.
+7. IDs aleatórios são salvos no navegador do organizador. Navegadores e dispositivos diferentes geram conjuntos diferentes: use sempre o mesmo navegador organizador ou distribua os links já copiados.
+8. O GitHub Pages hospeda o painel, não transmite vídeo nem armazena gravações.
+9. Transmissões são via VDO.Ninja e exigem disponibilidade do serviço e navegadores compatíveis com WebRTC.
+10. Não divulgue os links push publicamente; são links de contribuição que permitem publicar vídeo no ID correspondente.
+11. O plugin nativo do OBS é opcional: fontes de navegador já permitem receber o vídeo.
+Fontes oficiais: https://github.com/steveseguin/ninja-obs-plugin
+                 https://docs.vdo.ninja/common-errors-and-known-issues/no-video-in-obs-just-an-add-camera-button
+
+
+VERSÃO 15 — SALAS DE REUNIÃO VDO.NINJA
+- Abra Transmissões, selecione uma modalidade e copie o link de convite.
+- Os convidados entram na sala via VDO.Ninja e podem compartilhar vídeo e áudio.
+- O site embute uma cena VDO.Ninja (scene=0), que adiciona automaticamente câmeras conectadas.
+- OBS: cole o link "Cena em grade para OBS" em uma fonte Navegador 1920x1080.
+- O diretor acessa um link separado, que deve ficar privado.
+- As salas são públicas para quem conhece o link: não há autenticação própria.
+- As salas NÃO são hospedadas pelo GitHub Pages; são salas WebRTC do serviço VDO.Ninja.
+- É necessário testar câmera, permissão do navegador, largura de banda e áudio em equipamentos reais.
+- O site não grava nem publica a transmissão ao vivo por conta própria.
+
+PADRÃO V16 — LINKS DE SALA (TÊNIS DE MESA):
+Manager: https://vdo.ninja/?director=tenisdemesa
+Participante: https://vdo.ninja/?room=tenisdemesa
+Cena OBS/site: https://vdo.ninja/?scene=0&room=tenisdemesa
+Modalidades com categorias Feminino/Masculino do mesmo esporte compartilham a sala de transmissão.

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#190d29">
+<meta name="description" content="Placar oficial e quadro de medalhas do Esporte Jovem.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Quadro de Medalhas</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="aguarda">
+  <div id="fundo"></div>
+  <div id="particulas"></div>
+
+  <!-- ===== INTRO (sem som, 100% código) ===== -->
+  <div id="intro" aria-hidden="true">
+    <div class="intro-bg"></div>
+    <div class="rays"></div>
+    <div class="stage">
+      <div class="float">
+        <div class="logo3d">
+          <i class="piece" style="--i:0;--from:translate3d(-130%,-90%,-900px) rotateY(70deg) rotateZ(-28deg);clip-path:inset(0 49.8% 61.8% 0)"></i>
+          <i class="piece" style="--i:1;--from:translate3d(130%,-100%,-900px) rotateX(-65deg) rotateZ(32deg);clip-path:inset(0 0 61.8% 49.8%)"></i>
+          <i class="piece" style="--i:2;--from:translate3d(0,10%,-1500px) rotateX(80deg) rotateZ(-8deg);clip-path:inset(38% 0 37.8% 0)"></i>
+          <i class="piece" style="--i:3;--from:translate3d(-110%,100%,-700px) rotateY(-62deg) rotateZ(22deg);clip-path:inset(62% 49.8% 0 0)"></i>
+          <i class="piece" style="--i:4;--from:translate3d(120%,110%,-800px) rotateX(70deg) rotateZ(-36deg);clip-path:inset(62% 0 0 49.8%)"></i>
+          <i class="whole"></i>
+          <i class="shine"></i>
+          <div class="sparks" id="sparks"></div>
+        </div>
+        <i class="reflexo"></i>
+      </div>
+      <i class="flash"></i>
+      <i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>
+    </div>
+    <p class="tagline" id="introTexto"></p>
+    <button class="pular" id="pular" type="button">Pular ›</button>
+  </div>
+
+  <main class="painel">
+    <div class="eyebrow"><span class="live-dot"></span> PLACAR OFICIAL <span class="eyebrow-line"></span> ESPORTE JOVEM</div>
+    <header class="topo">
+      <img id="logo" class="logo-topo" alt="" hidden>
+      <div class="titulos">
+        <p id="subtitulo"></p>
+        <h1 id="titulo"></h1>
+        <p id="info"></p>
+      </div>
+      <img id="logoSec" class="logo-sec" alt="" hidden>
+    </header>
+
+    <nav class="navegacao-site" aria-label="Menu principal">
+      <button type="button" class="aba-navegacao ativa" id="abaHome" aria-selected="true">⌂ Home / Ranking</button>
+      <button type="button" class="aba-navegacao" id="abaTransmissao" aria-selected="false">◉ Transmissões</button>
+    </nav>
+
+    <div id="secaoHome">
+    <section class="resumo" aria-label="Resumo da competição">
+      <div class="stat"><span class="stat-label">EQUIPES</span><strong id="statEquipes">0</strong><span class="stat-foot">na disputa</span></div>
+      <div class="stat"><span class="stat-label">MEDALHAS</span><strong id="statMedalhas">0</strong><span class="stat-foot">distribuídas</span></div>
+      <div class="stat stat-lider"><span class="stat-label">LIDERANÇA ATUAL</span><strong id="statLider">—</strong><span class="stat-foot">1º lugar geral</span></div>
+    </section>
+
+    <section class="podio-section" aria-label="Destaques dos três primeiros colocados">
+      <div class="section-kicker"><span>DESTAQUES DA COMPETIÇÃO</span><i></i><label class="modalidade-select-wrap" for="modalidadeSelect"><span>MODALIDADE</span><select id="modalidadeSelect" aria-label="Selecionar modalidade"><option value="todos">Todas as modalidades</option></select></label></div>
+      <div id="podio" class="podio"></div>
+    </section>
+
+    <div class="faixa">
+      <span id="tituloQuadro"></span>
+      <div class="cols">
+        <img class="medalha-imagem" src="img/medalhas/ouro.webp" alt="Ouro" title="Ouro">
+        <img class="medalha-imagem" src="img/medalhas/prata.webp" alt="Prata" title="Prata">
+        <img class="medalha-imagem" src="img/medalhas/bronze.webp" alt="Bronze" title="Bronze">
+        <span class="medalha-soma" title="Total de medalhas">TOTAL</span>
+      </div>
+    </div>
+
+    <p id="avisoCadastro" role="status" hidden></p>
+    <ol id="lista" aria-label="Classificação geral"></ol>
+    <footer class="rodape"><span><i class="live-dot"></i> Classificação atualizada automaticamente</span><span id="ultimaAtualizacao">—</span></footer>
+    <p id="erro" hidden></p>
+    </div>
+
+    <section id="secaoTransmissao" class="area-transmissoes" hidden aria-label="Salas por modalidade">
+      <div class="trans-hero">
+        <span class="trans-selo"><span class="live-dot"></span> CENTRAL DE TRANSMISSÕES</span>
+        <h2>CÂMERAS <em>AO VIVO</em></h2>
+        <p>Uma sala por modalidade, como em uma reunião. Quem recebe o convite compartilha sua câmera, e todas as câmeras conectadas aparecem automaticamente na grade abaixo.</p>
+      </div>
+      <div class="trans-barra">
+        <label for="transModalidade">SELECIONE A MODALIDADE
+          <select id="transModalidade" aria-label="Modalidade da sala"></select>
+        </label>
+      </div>
+      <div class="sala-cabecalho">
+        <div><span class="trans-selo">SALA DA MODALIDADE</span><h3 id="salaNome">—</h3><p>As câmeras conectadas aparecem e desaparecem automaticamente na transmissão, conforme os participantes entram ou saem.</p></div>
+        <div class="sala-estado"><span class="live-dot"></span> SALA WEBRTC</div>
+      </div>
+      <div class="sala-grade" id="salaGrade">
+        <div class="sala-vazia"><span>▣</span><p>Selecione uma modalidade para carregar a sala.</p></div>
+      </div>
+      <p class="sala-legenda">Visualização em grade fornecida pelo VDO.Ninja. Pode aparecer vazia enquanto ninguém estiver transmitindo. O vídeo requer conexão com a internet.</p>
+      <div class="sala-acoes">
+        <div class="sala-link"><label for="linkConvidado">CONVIDAR PARTICIPANTE — ENVIAR CÂMERA</label><div><input id="linkConvidado" readonly><button id="copiarConvidado" class="trans-botao" type="button">Copiar convite</button></div></div>
+        <div class="sala-link"><label for="linkObs">CENA EM GRADE PARA OBS</label><div><input id="linkObs" readonly><button id="copiarObs" class="trans-botao" type="button">Copiar para OBS</button></div></div>
+        <div class="sala-link"><label for="linkDiretor">MANAGER — CONTROLE DA SALA</label><div><input id="linkDiretor" readonly><button id="copiarDiretor" class="trans-botao" type="button">Copiar Manager</button></div></div>
+      </div>
+      <div class="sala-links-externos"><a id="abrirConvite" target="_blank" rel="noopener noreferrer">Entrar com câmera ↗</a><a id="abrirDiretor" target="_blank" rel="noopener noreferrer">Abrir sala do diretor ↗</a><button id="recarregarSala" type="button" class="trans-botao">Recarregar grade</button></div>
+      <div class="trans-instrucoes">
+        <h3>Como funciona</h3>
+        <ol>
+          <li>Selecione a modalidade; cada modalidade tem sua própria sala.</li>
+          <li>Envie o link <strong>Convidar participante</strong> às pessoas que irão compartilhar câmera e microfone.</li>
+          <li>Os participantes entram pelo celular ou computador, autorizam os dispositivos, e suas câmeras aparecem na grade deste site.</li>
+          <li>Para o OBS Studio, adicione uma <strong>Fonte de navegador</strong> e cole o link <strong>Cena em grade para OBS</strong> (recomendado: 1920 × 1080).</li>
+          <li>O link Manager (?director=) permite gerir os participantes; mantenha-o privado.</li>
+        </ol>
+        <p>O site não inicia uma live pública e não grava as imagens. O VDO.Ninja é o responsável pelas conexões de vídeo. Teste a sala e o áudio antes do evento; não abra a mesma sala em vários dispositivos com som ativo para evitar eco.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="transmissoes.js"></script>
+</body>
+</html>
