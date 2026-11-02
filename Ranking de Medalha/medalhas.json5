@@ -1,0 +1,36 @@
+{
+  // ===== CONFIGURAÇÃO DO SITE =====
+  config: {
+    titulo: "Esporte Jovem 2026",
+    subtitulo: "Projeto Esporte Jovem",
+    tituloQuadro: "Quadro de Medalhas",
+    //data: "2 de Novembro às 7H",
+    //local: "Vila Olímpica · Av. Pedro Teixeira - Dom Pedro",
+
+    logo: "img/logo.png",          // logo principal (intro + topo)
+    logoSecundaria: "",            // opcional (ex.: "img/fju.png")
+    fundo: "",                     // imagem de fundo (vazio = degradê roxo)
+    corDestaque: "#ff9a1a",        // laranja
+
+    intro: true,                   // false = pula a animação de abertura
+    introSegundos: 5.6,            // duração da intro antes de abrir o quadro
+    introTexto: "Vila Olímpica · 2 de Novembro",
+
+    atualizarSegundos: 30,         // recarrega este arquivo sozinho (0 = desligado)
+    destaque: "",                  // id do time para destacar (opcional)
+    particulas: true
+  },
+
+  // ===== TIMES =====
+  // id: identificador único | nome: nome exibido | imagem: escudo/logo do time (opcional)
+  // Sem imagem (ou se o arquivo não existir) aparece um selo com as iniciais.
+  // Também aceita: codigo (ISO de 2 letras → bandeira automática) | posicao | total
+  times: [
+    { id: "CATEDRAL", nome: "CATEDRAL", imagem: "img/times/time-01.png", ouro: 6, prata: 3, bronze: 2 },
+    { id: "BLOCO NORTE", nome: "BLOCO NORTE", imagem: "img/times/time-02.png", ouro: 5, prata: 4, bronze: 4 },
+    { id: "BLOCO SUL", nome: "BLOCO SUL", imagem: "img/times/time-03.png", ouro: 4, prata: 5, bronze: 1 },
+    { id: "time-04", nome: "Time 04", imagem: "img/times/time-04.png", ouro: 3, prata: 2, bronze: 5 },
+    { id: "time-05", nome: "Time 05", imagem: "img/times/time-05.png", ouro: 2, prata: 2, bronze: 3 },
+    { id: "time-06", nome: "Time 06", imagem: "img/times/time-06.png", ouro: 1, prata: 3, bronze: 2 }
+  ]
+}

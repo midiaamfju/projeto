@@ -1,0 +1,22 @@
+ESPORTE JOVEM — RANKING POR MODALIDADE
+====================================
+
+1. Extraia o ZIP inteiro e abra index.html.
+2. Abra medalhas.js em um editor de texto (Bloco de Notas, VS Code etc.).
+3. Em "modalidades", escreva os nomes dos times vencedores:
+
+   "Basquete": { ouro:"TIME 1", prata:"TIME 4", bronze:"TIME 6" },
+   "Vôlei":   { ouro:"TIME 2", prata:"TIME 1", bronze:"TIME 5" }
+
+4. Salve e atualize o navegador.
+
+O ranking geral soma todas as medalhas de todas as modalidades.
+Critério de desempate: ouro, depois prata, depois bronze e, persistindo, ordem alfabética.
+O seletor ao lado de DESTAQUES DA COMPETIÇÃO filtra por modalidade.
+Pode deixar uma medalha vazia: ouro:"".
+Para nova modalidade, adicione outra linha ao objeto "modalidades".
+Para adicionar escudo, use o campo "times" (o nome/id deve corresponder ao nome escrito em modalidades).
+
+ATENÇÃO: os resultados iniciais com TIME 1, TIME 2 etc. são exemplos fictícios, não resultados oficiais.
+As imagens das medalhas estão em img/medalhas, no formato WEBP.
+A atualização automática permanece configurada em medalhas.js.
