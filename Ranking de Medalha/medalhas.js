@@ -54,7 +54,7 @@ window.MEDALHAS = {
     "Basquete 3x3 - Masculino": { ouro: "", prata: "" },
     "Futevôlei - Feminino": { ouro: "CATEDRAL", prata: "NORTE" },
     "Futevôlei - Masculino": { ouro: "CATEDRAL", prata: "NORTE" },
-    "Futsal - Feminino": { ouro: "", prata: "" },
+    "Futsal - Feminino": { ouro: "NOROESTE", prata: "NORTE" },
     "Futsal - Masculino": { ouro: "SUL", prata: "NORTE" },
     "Jiu-Jitsu - Feminino": { ouro: "", prata: "" },
     "Jiu-Jitsu - Masculino": { ouro: "", prata: "" },
@@ -68,7 +68,8 @@ window.MEDALHAS = {
     "Vôlei de Areia - Feminino": { ouro: "SUL", prata: "LESTE" },
     "Vôlei de Areia - Masculino": { ouro: "INTERIOR", prata: "SUL" },
     "Vôlei de Quadra - Feminino": { ouro: "SUL", prata: "CATEDRAL" },
-    "Vôlei de Quadra - Masculino": { ouro: "", prata: "" },
+    "Vôlei de Quadra - Masculino": { ouro: "LESTE ", prata: "INTERIOR" },
+    "jiu jitsu - Masculino": { ouro: "LESTE ", prata: "INTERIOR" },
     "Xadrez": { ouro: "LESTE", prata: "SUL" }
   }
 };
