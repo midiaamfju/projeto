@@ -376,6 +376,7 @@ function render(dados) {
 
 /* ---------- carregar JSON ---------- */
 async function carregar() {
+  if (window.esporteJovemTransmissaoAtiva) { clearTimeout(timer); return; }
   try {
     const dados = await lerDados();
     $("erro").hidden = true;
@@ -385,11 +386,12 @@ async function carregar() {
       aplicarConfig(dados.config);
       await intro(dados.config);
     }
+    if (window.esporteJovemTransmissaoAtiva) { clearTimeout(timer); return; }
     render(dados);
 
     clearTimeout(timer);
     const s = Number(dados.config?.atualizarSegundos) || 0;
-    if (s > 0) timer = setTimeout(carregar, s * 1000);
+    if (s > 0 && !window.esporteJovemTransmissaoAtiva) timer = setTimeout(carregar, s * 1000);
   } catch (e) {
     if (primeira) { primeira = false; await intro({}); }
     const erro = $("erro");
@@ -397,7 +399,7 @@ async function carregar() {
     erro.textContent = `Erro ao carregar ${ARQUIVO}: ${e.message}`;
     console.error(e);
     clearTimeout(timer);
-    timer = setTimeout(carregar, 15000);
+    if (!window.esporteJovemTransmissaoAtiva) timer = setTimeout(carregar, 15000);
   }
 }
 carregar();

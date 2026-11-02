@@ -76,3 +76,13 @@ TESTE DA CÂMERA NO CELULAR (V18)
 5. Se não aparecer no VDO.Ninja direto, confira que o identificador room é igual em ambos links, a conexão está ativa e as permissões foram concedidas. Use a sala do diretor para ver se o convidado entrou.
 6. Se o site estiver no GitHub Pages, publique todos os arquivos V18 (especialmente transmissoes.js e index.html) e atualize a página com Ctrl+F5.
 Nota: o site não recebe o vídeo em servidor próprio. A grade embute uma cena do VDO.Ninja. Sem teste real não é possível garantir conectividade nas redes/dispositivos dos convidados.
+
+
+VERSÃO 19 — AJUSTES DE SALA E ATUALIZAÇÃO
+- Convite de câmera: https://vdo.ninja/?room=tenisdemesa (sem parâmetro mobile nem push isolado)
+- Manager: https://vdo.ninja/?director=tenisdemesa
+- Cena: https://vdo.ninja/?scene=0&room=tenisdemesa
+- Todos usam o MESMO ID de sala. Escolha a mesma modalidade no computador e no convite.
+- O ranking só faz novas leituras em Home. Ao abrir Transmissões, o timer é suspenso e a cena em iframe permanece estável; ao voltar à Home, os dados são atualizados novamente.
+- Se o participante não aparecer no Manager, confirme que ele tocou em Iniciar no VDO.Ninja e abriu o link com room=, não link individual push=.
+- GitHub Pages: reenvie index.html, script.js, transmissoes.js e limpe o cache (Ctrl+F5).

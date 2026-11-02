@@ -89,7 +89,7 @@
       <div class="trans-hero">
         <span class="trans-selo"><span class="live-dot"></span> CENTRAL DE TRANSMISSÕES</span>
         <h2>CÂMERAS <em>AO VIVO</em></h2>
-        <p>Uma sala por modalidade, como em uma reunião. Quem recebe o convite precisa permitir câmera e microfone e tocar em INICIAR/ENTRAR no VDO.Ninja. Só depois a imagem será enviada para a sala e aparecerá na grade abaixo.</p>
+        <p>Uma sala por modalidade, como em uma reunião. Envie o link de participante gerado aqui, abra o Manager da MESMA modalidade e peça à pessoa para autorizar e iniciar a câmera no VDO.Ninja.</p>
       </div>
       <div class="trans-barra">
         <label for="transModalidade">SELECIONE A MODALIDADE
@@ -97,13 +97,13 @@
         </label>
       </div>
       <div class="sala-cabecalho">
-        <div><span class="trans-selo">SALA DA MODALIDADE</span><h3 id="salaNome">—</h3><p>As câmeras conectadas aparecem e desaparecem automaticamente na transmissão, conforme os participantes entram ou saem.</p></div>
+        <div><span class="trans-selo">SALA DA MODALIDADE</span><h3 id="salaNome">—</h3><p>As câmeras ficam vinculadas à sala do diretor desta modalidade. Convidado, Manager e cena OBS usam o mesmo ID de sala.</p></div>
         <div class="sala-estado"><span class="live-dot"></span> SALA WEBRTC</div>
       </div>
       <div class="sala-grade" id="salaGrade">
         <div class="sala-vazia"><span>▣</span><p>Selecione uma modalidade para carregar a sala.</p></div>
       </div>
-      <p class="sala-legenda">Visualização em grade fornecida pelo VDO.Ninja. Pode aparecer vazia enquanto ninguém estiver transmitindo. O vídeo requer conexão com a internet. Se a grade estiver vazia, use “Abrir câmeras fora do site” para testar a cena diretamente no VDO.Ninja.</p>
+      <p class="sala-legenda">Visualização em grade da mesma sala do Manager. Pode aparecer vazia enquanto ninguém estiver transmitindo. O vídeo requer conexão com a internet. Se a grade estiver vazia, use “Abrir câmeras fora do site” para testar a cena diretamente no VDO.Ninja.</p>
       <div class="sala-acoes">
         <div class="sala-link"><label for="linkConvidado">CONVIDAR PARTICIPANTE — ENVIAR CÂMERA</label><div><input id="linkConvidado" readonly><button id="copiarConvidado" class="trans-botao" type="button">Copiar convite</button></div></div>
         <div class="sala-link"><label for="linkObs">CENA EM GRADE PARA OBS</label><div><input id="linkObs" readonly><button id="copiarObs" class="trans-botao" type="button">Copiar para OBS</button></div></div>
@@ -113,11 +113,11 @@
       <div class="trans-instrucoes">
         <h3>Como funciona</h3>
         <ol>
-          <li>Selecione a modalidade; cada modalidade tem sua própria sala.</li>
+          <li>Selecione a modalidade. Tênis de Mesa usa a sala tenisdemesa; as categorias feminina e masculina do mesmo esporte compartilham essa sala.</li>
           <li>Envie o link <strong>Convidar participante</strong> às pessoas que irão compartilhar câmera e microfone.</li>
-          <li>Os participantes entram pelo celular ou computador, autorizam os dispositivos, e suas câmeras aparecem na grade deste site.</li>
+          <li>O celular deve abrir o link ?room= (não ?push=), autorizar os dispositivos e tocar em Iniciar. A câmera entra na mesma sala do diretor e aparece na grade do site.</li>
           <li>Para o OBS Studio, adicione uma <strong>Fonte de navegador</strong> e cole o link <strong>Cena em grade para OBS</strong> (recomendado: 1920 × 1080).</li>
-          <li>O link Manager (?director=) permite gerir os participantes; mantenha-o privado.</li>
+          <li>O Manager (?director=), o convite (?room=) e a cena (?scene=0&room=) devem ter exatamente o mesmo nome de sala. Mantenha o Manager privado.</li>
         </ol>
         <p>O site não inicia uma live pública e não grava as imagens. O VDO.Ninja é o responsável pelas conexões de vídeo. Teste a sala e o áudio antes do evento; não abra a mesma sala em vários dispositivos com som ativo para evitar eco.</p>
       </div>

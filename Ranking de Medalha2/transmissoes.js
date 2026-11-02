@@ -7,6 +7,7 @@
   const home = $("secaoHome"), live = $("secaoTransmissao"), select = $("transModalidade");
   const roomFrame = $("salaGrade");
   let modalidades = [];
+  let salaCarregada = "";
   const ROOM_NAMESPACE = "";
   const base = "https://vdo.ninja/";
   // Nome legível e previsível. Tênis de Mesa usa exatamente a sala solicitada.
@@ -24,7 +25,7 @@
   function links(nome) {
     const room = salaId(nome);
     return {
-      convidado: url({room, mobile: 1}),
+      convidado: url({room}),
       obs: url({scene:0,room}),
       diretor: url({director:room})
     };
@@ -46,6 +47,8 @@
     $("abrirConvite").href=l.convidado;
     $("abrirDiretor").href=l.diretor;
     $("abrirCena").href=l.obs;
+    if (salaCarregada === salaId(nome) && roomFrame.querySelector("iframe")) return;
+    salaCarregada = salaId(nome);
     roomFrame.replaceChildren();
     const frame=document.createElement("iframe");
     frame.src=l.obs;
@@ -71,13 +74,21 @@
     $("abaTransmissao").classList.toggle("ativa",isLive);
     $("abaHome").setAttribute("aria-selected",String(!isLive));
     $("abaTransmissao").setAttribute("aria-selected",String(isLive));
-    if(isLive)desenhar();else roomFrame.replaceChildren();
+    window.esporteJovemTransmissaoAtiva = isLive;
+    if (isLive) {
+      if (typeof timer !== "undefined") clearTimeout(timer);
+      desenhar();
+    } else {
+      roomFrame.replaceChildren();
+      salaCarregada = "";
+      if (typeof carregar === "function") carregar();
+    }
     if(atualizarHash)history.replaceState(null,"",location.pathname+location.search+"#"+(isLive?"transmissoes":"home"));
   }
   $("abaHome").addEventListener("click",()=>abrirAba("home"));
   $("abaTransmissao").addEventListener("click",()=>abrirAba("transmissoes"));
   select.addEventListener("change",desenhar);
-  $("recarregarSala").addEventListener("click",desenhar);
+  $("recarregarSala").addEventListener("click",()=>{salaCarregada="";desenhar();});
   [["copiarConvidado","linkConvidado"],["copiarObs","linkObs"],["copiarDiretor","linkDiretor"]].forEach(([button,input])=>$(button).addEventListener("click",()=>copiar($(input).value,$(button))));
   window.addEventListener("esportejovem:dados",e=>atualizarModalidades(e.detail.modalidades));
   if(window.MEDALHAS?.modalidades) atualizarModalidades(Object.keys(window.MEDALHAS.modalidades));
