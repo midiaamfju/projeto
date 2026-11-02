@@ -1,0 +1,21 @@
+ESPORTE JOVEM — QUADRO DE MEDALHAS / EDIÇÃO PRO
+
+COMO ABRIR
+1. Extraia esta pasta.
+2. Abra index.html no navegador (Chrome, Edge ou Firefox).
+3. Para testar sem a introdução, abra index.html?intro=0
+
+COMO ATUALIZAR O PLACAR
+- Edite somente medalhas.js: altere ouro, prata e bronze dos times.
+- Salve o arquivo. O site tenta recarregá-lo a cada 30 segundos (config.atualizarSegundos).
+- Não altere os IDs dos times ao atualizar a pontuação.
+- Se abrir por file://, a atualização pode depender do cache do navegador; pressione Ctrl+F5 caso necessário.
+
+LOGOS DE TIMES
+- Coloque as imagens em img/times/ conforme os nomes indicados em medalhas.js.
+- Imagens de times não constavam do material enviado: enquanto não forem incluídas, serão usadas as iniciais.
+
+RECURSOS
+- Abertura cinematográfica preservada, pódio dinâmico (top 3), indicadores resumidos, contagem animada, transição de posições e layout para celular / TV / computador.
+- Pódio e ranking ordenados por OURO, depois PRATA, depois BRONZE.
+- Não é necessário instalar bibliotecas nem criar conta. Fontes web opcionais: na ausência de internet, serão usadas fontes locais de substituição.
