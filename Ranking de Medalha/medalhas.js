@@ -45,10 +45,28 @@ window.MEDALHAS = {
   // Para indicar medalhas ainda não definidas, deixe o valor vazio: "".
   // Para adicionar esporte, copie uma linha e altere o nome e os vencedores.
   modalidades: {
-    "Basquete": { ouro:"", prata:"", bronze:"" },
-    "Vôlei":    { ouro:"", prata:"", bronze:"" },
-    "Futsal":   { ouro:"", prata:"", bronze:"" },
-    "Futebol":  { ouro:"", prata:"", bronze:"" },
-    "Atletismo":{ ouro:"", prata:"", bronze:"" }
+    "Vôlei de Quadra - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Vôlei de Quadra - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Vôlei de Areia - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Vôlei de Areia - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Xadrez - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Xadrez - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Futsal - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Futsal - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Futevôlei - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Futevôlei - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Queimada": { "ouro": "", "prata": "", "bronze": "" },
+    "Tênis de Mesa - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Tênis de Mesa - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Natação - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Natação - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Atletismo - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Atletismo - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Revezamento - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Revezamento - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Jiu-Jitsu - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Jiu-Jitsu - Feminino": { "ouro": "", "prata": "", "bronze": "" },
+    "Basquete 3x3 - Masculino": { "ouro": "", "prata": "", "bronze": "" },
+    "Basquete 3x3 - Feminino": { "ouro": "", "prata": "", "bronze": "" }
   }
 };
