@@ -31,11 +31,11 @@ window.MEDALHAS = {
   // Sem imagem (ou se o arquivo não existir) aparece um selo com as iniciais.
   // Também aceita: codigo (ISO de 2 letras → bandeira automática) | posicao | total
   times: [
-    { id: "CATEDRAL", nome: "CATEDRAL", imagem: "img/times/time-01.png", ouro: 6, prata: 3, bronze: 2 },
-    { id: "BLOCO NORTE", nome: "BLOCO NORTE", imagem: "img/times/time-02.png", ouro: 5, prata: 4, bronze: 4 },
-    { id: "BLOCO SUL", nome: "BLOCO SUL", imagem: "img/times/time-03.png", ouro: 4, prata: 5, bronze: 1 },
-    { id: "BLOCO NOROESTE", nome: "BLOCO NOROESTE", imagem: "img/times/time-04.png", ouro: 5, prata: 2, bronze: 5 },
-    { id: "time-05", nome: "Time 05", imagem: "img/times/time-05.png", ouro: 2, prata: 2, bronze: 3 },
-    { id: "time-06", nome: "Time 06", imagem: "img/times/time-06.png", ouro: 1, prata: 3, bronze: 2 }
+    { id: "time-01", imagem: "img/times/time-01.png", ouro: 0, prata: 0, bronze: 0 , nome: "CATEDRAL"},
+    { id: "time-02", nome: "BLOCO NORTE", imagem: "img/times/time-02.png", ouro: 0, prata: 0, bronze: 0 },
+    { id: "time-03", nome: "BLOCO SUL", imagem: "img/times/time-03.png", ouro: 0, prata: 0, bronze: 0 },
+    { id: "time-04", nome: "BLOCO NOROESTE", imagem: "img/times/time-04.png", ouro: 0, prata: 0, bronze: 0 },
+    { id: "time-05", nome: "Time 05", imagem: "img/times/time-05.png", ouro: 0, prata: 0, bronze: 0 },
+    { id: "time-06", nome: "Time 06", imagem: "img/times/time-06.png", ouro: 0, prata: 0, bronze: 0 }
   ]
 };
