@@ -61,7 +61,7 @@ window.MEDALHAS = {
     "Natação - Feminino": { ouro: "CATEDRAL", prata: "SUL" },
     "Natação - Masculino": { ouro: "SUL", prata: "CATEDRAL" },
     "Queimada": { ouro: "NORTE", prata: "LESTE" },
-    "Revezamento": { ouro: "/*CATEDRAL*/", prata: "NORTE" },
+    "Revezamento": { ouro: "", prata: "NORTE" },
     "Tênis de Mesa - Feminino": { ouro: "LESTE", prata: "LESTE" },
     "Tênis de Mesa - Masculino": { ouro: "", prata: "" },
     "Vôlei de Areia - Feminino": { ouro: "", prata: "" },
