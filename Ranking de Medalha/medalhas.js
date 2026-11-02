@@ -44,12 +44,12 @@ window.MEDALHAS = {
   // Preencha bronze quando o terceiro lugar for definido; a pontuação e o pódio atualizam automaticamente.
   // Exemplo: { ouro: "CATEDRAL", prata: "SUL", bronze: "NORTE" }.
   modalidades: {
-    "Atletismo 100m - Feminino": { ouro: "", prata: "" },
-    "Atletismo 100m - Masculino": { ouro: "", prata: "" },
-    "Atletismo 200m - Feminino": { ouro: "", prata: "" },
-    "Atletismo 200m - Masculino": { ouro: "", prata: "" },
+    "Atletismo 100m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
+    "Atletismo 100m - Masculino": { ouro: "OESTE", prata: "NOROESTE" },
+    "Atletismo 200m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
+    "Atletismo 200m - Masculino": { ouro: "OESTE", prata: "NOROESTE" },
     "Atletismo 400m - Feminino": { ouro: "", prata: "" },
-    "Atletismo 400m - Masculino": { ouro: "", prata: "" },
+    "Atletismo 400m - Masculino": { ouro: "NOROESTE", prata: "NORTE" },
     "Basquete 3x3 - Feminino": { ouro: "", prata: "" },
     "Basquete 3x3 - Masculino": { ouro: "", prata: "" },
     "Futevôlei - Feminino": { ouro: "CATEDRAL", prata: "NORTE" },
