@@ -44,7 +44,7 @@ window.MEDALHAS = {
   // Preencha bronze quando o terceiro lugar for definido; a pontuação e o pódio atualizam automaticamente.
   // Exemplo: { ouro: "CATEDRAL", prata: "SUL", bronze: "NORTE" }.
   modalidades: {
-    "Atletismo 100m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
+    "Atletismo 100m - Feminino": { ouro: "CATEDRAL", prata: "NORTE" },
     "Atletismo 100m - Masculino": { ouro: "OESTE", prata: "NOROESTE" },
     "Atletismo 200m - Feminino": { ouro: "CATEDRAL", prata: "NOROESTE" },
     "Atletismo 200m - Masculino": { ouro: "SUL", prata: "OESTE" },
