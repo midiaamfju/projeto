@@ -54,6 +54,7 @@
       <div><label for="ghOwner">Usuário / organização</label><input id="ghOwner" autocomplete="off"></div>
       <div><label for="ghRepo">Repositório</label><input id="ghRepo" autocomplete="off"></div>
       <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main" autocomplete="off"></div>
+      <div><label for="ghPath">Caminho do arquivo</label><input id="ghPath" value="medalhas.js" autocomplete="off"></div>
       <div><label for="ghToken">Token do GitHub</label><input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_..."></div>
     </div>
     <p><small>Use um <b>fine-grained token</b> com acesso só a este repositório e permissão <b>Contents: Read and write</b>. Ele fica salvo apenas neste navegador. Não use em computador compartilhado.</small></p>
@@ -94,7 +95,7 @@
   const $ = id => document.getElementById(id);
   const ARQUIVO = "medalhas.js";
   const CORES = ["ouro", "prata", "bronze"];
-  const campos = ["ghOwner", "ghRepo", "ghBranch", "ghToken"];
+  const campos = ["ghOwner", "ghRepo", "ghBranch", "ghPath", "ghToken"];
   let dados = null;
 
   const store = {
@@ -118,10 +119,33 @@
     $("ghOwner").value = store.get("ghOwner") || det.owner || "";
     $("ghRepo").value = store.get("ghRepo") || det.repo || "";
     $("ghBranch").value = store.get("ghBranch") || "main";
+    $("ghPath").value = store.get("ghPath") || ARQUIVO;
     $("ghToken").value = store.get("ghToken") || "";
     campos.forEach(c => $(c).addEventListener("change", () => store.set(c, $(c).value.trim())));
   }
-  const gh = () => ({ owner: $("ghOwner").value.trim(), repo: $("ghRepo").value.trim(), branch: $("ghBranch").value.trim() || "main", token: $("ghToken").value.trim() });
+  const gh = () => ({ owner: $("ghOwner").value.trim(), repo: $("ghRepo").value.trim(), branch: $("ghBranch").value.trim() || "main", path: $("ghPath").value.trim().replace(/^\/+/, "") || ARQUIVO, token: $("ghToken").value.trim() });
+  const ajustar = (campo, valor) => { $(campo).value = valor; store.set(campo, valor); };
+
+  // Um 404 do GitHub não diz o que falta; testa repositório, branch e arquivo separadamente.
+  // Retorna true quando corrigiu algo sozinho (vale tentar de novo).
+  async function diagnosticar404() {
+    const { owner, repo, branch, path, token } = gh();
+    const h = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" };
+    const base = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
+    const r = await fetch(base, { headers: h, cache: "no-store" });
+    if (r.status === 404) throw new Error(`O token não enxerga o repositório "${owner}/${repo}". Confira se usuário e repositório estão escritos exatamente como em github.com/${owner}/${repo}, e se o token inclui esse repositório em "Repository access" (e o "Resource owner" certo, se for de uma organização).`);
+    if (!r.ok) return false;
+    const info = await r.json();
+    const b = await fetch(`${base}/branches/${encodeURIComponent(branch)}`, { headers: h, cache: "no-store" });
+    if (b.status === 404) {
+      if (info.default_branch && info.default_branch !== branch) { ajustar("ghBranch", info.default_branch); return true; }
+      throw new Error(`A branch "${branch}" não existe em ${owner}/${repo}.`);
+    }
+    const t = await fetch(`${base}/git/trees/${encodeURIComponent(branch)}?recursive=1`, { headers: h, cache: "no-store" });
+    const achado = t.ok ? ((await t.json()).tree || []).find(x => x.type === "blob" && x.path.split("/").pop() === ARQUIVO) : null;
+    if (achado && achado.path !== path) { ajustar("ghPath", achado.path); return true; }
+    throw new Error(`Não achei ${ARQUIVO} na branch "${branch}" de ${owner}/${repo}. Envie o arquivo para o repositório.`);
+  }
 
   // medalhas.js é JS válido ("window.MEDALHAS = {...}"); roda num window falso só para ler o objeto.
   function interpretar(texto) {
@@ -134,11 +158,11 @@
   const b64decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, "")), c => c.charCodeAt(0)));
   const b64encode = txt => { let s = ""; new TextEncoder().encode(txt).forEach(b => s += String.fromCharCode(b)); return btoa(s); };
 
-  async function api(metodo, corpo) {
-    const { owner, repo, branch, token } = gh();
+  async function api(metodo, corpo, tentou = false) {
+    const { owner, repo, branch, path, token } = gh();
     if (!owner || !repo) throw new Error("Preencha usuário e repositório do GitHub.");
     if (!token) throw new Error("Informe o token do GitHub.");
-    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${ARQUIVO}` + (metodo === "GET" ? `?ref=${encodeURIComponent(branch)}&t=${Date.now()}` : "");
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path.split("/").map(encodeURIComponent).join("/")}` + (metodo === "GET" ? `?ref=${encodeURIComponent(branch)}&t=${Date.now()}` : "");
     const r = await fetch(url, {
       method: metodo,
       headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
@@ -146,6 +170,7 @@
       cache: "no-store"
     });
     const json = await r.json().catch(() => ({}));
+    if (r.status === 404 && metodo === "GET" && !tentou && await diagnosticar404()) return api(metodo, corpo, true);
     if (!r.ok) {
       const dica = r.status === 401 ? " (token inválido ou expirado)" : r.status === 403 ? " (token sem permissão de escrita em Contents)" : r.status === 404 ? " (repositório, branch ou arquivo não encontrado, ou token sem acesso)" : r.status === 409 ? " (o arquivo mudou no GitHub, carregue de novo)" : "";
       throw new Error(`GitHub respondeu ${r.status}${dica}: ${json.message || ""}`);
