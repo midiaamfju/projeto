@@ -100,3 +100,32 @@ VERSÃO 20 — SINCRONIZAÇÃO INDEPENDENTE
 V21: Empates completos (ouro, prata e bronze iguais) compartilham a mesma colocação (1º, 1º, 3º). O pódio reflete as posições empatadas. Resultados atualizados com a lista enviada.
 
 V23: Empates por classificacao densa (1, 2, 2, 3, 4), sem pular posicoes. O podio mostra nomes empatados no mesmo bloco.
+
+ÁREA DO ADMINISTRADOR (admin.html) — GitHub Pages
+-------------------------------------------------
+Endereço: https://SEU-USUARIO.github.io/SEU-REPOSITORIO/admin.html
+(A página não aparece no menu do site; guarde o link.)
+
+1. Crie um token em github.com > Settings > Developer settings >
+   Personal access tokens > Fine-grained tokens:
+   - Repository access: "Only select repositories" > este repositório
+   - Permissions > Contents: "Read and write"
+2. Abra admin.html, confira usuário/repositório/branch (vêm preenchidos
+   quando aberto pelo github.io) e cole o token.
+3. Clique em "Carregar dados do GitHub", edite ouro/prata/bronze e clique
+   em "Salvar no GitHub".
+4. O GitHub Pages publica em cerca de 1 minuto; o placar recarrega sozinho
+   (atualizarSegundos em medalhas.js).
+
+- Só quem tem o token consegue salvar. O token fica salvo só no navegador
+  onde foi digitado; use "Esquecer token" em computador compartilhado.
+- O admin troca apenas o bloco "modalidades" do medalhas.js. config, times
+  e comentários do resto do arquivo são mantidos.
+- Sem token: "Baixar medalhas.js" gera o arquivo para enviar manualmente
+  ao repositório.
+
+TRANSMISSÕES
+Cada modalidade tem sua própria sala no VDO.Ninja, inclusive Feminino e
+Masculino separados (ex.: futsalfeminino e futsalmasculino).
+ATENÇÃO: os links das salas mudaram. Reenvie os links de convidado/OBS
+das modalidades com gênero para quem transmite.

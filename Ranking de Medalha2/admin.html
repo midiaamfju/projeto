@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#190d29">
+<title>Admin · Quadro de Medalhas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#190d29; --card:#24143a; --linha:#3a2657; --texto:#f3ecff; --suave:#b9a6d6; --destaque:#ff9a1a; --ok:#3ecf8e; --erro:#ff5d6c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--texto); }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 80px; }
+  h1 { margin:0 0 4px; font-size:26px; }
+  h2 { font-size:18px; margin:0 0 12px; }
+  p.sub { margin:0 0 20px; color:var(--suave); }
+  section { background:var(--card); border:1px solid var(--linha); border-radius:12px; padding:16px; margin-bottom:16px; }
+  label { display:block; font-size:13px; color:var(--suave); margin-bottom:4px; }
+  input { width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--linha); background:#140a22; color:var(--texto); font:inherit; }
+  input:focus { outline:2px solid var(--destaque); outline-offset:1px; }
+  .grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  button { padding:9px 14px; border-radius:8px; border:1px solid var(--linha); background:#33204f; color:var(--texto); font:inherit; font-weight:600; cursor:pointer; }
+  button:hover { border-color:var(--destaque); }
+  button.principal { background:var(--destaque); color:#1d1030; border-color:var(--destaque); }
+  button.perigo { color:var(--erro); }
+  button:disabled { opacity:.5; cursor:wait; }
+  .acoes { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:6px; text-align:left; border-bottom:1px solid var(--linha); vertical-align:middle; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); }
+  td.nome input { font-weight:600; }
+  .m-ouro { border-left:4px solid #e7b73a; } .m-prata { border-left:4px solid #c9ccd6; } .m-bronze { border-left:4px solid #c27a45; }
+  #status { position:sticky; bottom:12px; padding:12px 14px; border-radius:10px; background:#140a22; border:1px solid var(--linha); display:none; }
+  #status.ok { display:block; border-color:var(--ok); } #status.erro { display:block; border-color:var(--erro); } #status.info { display:block; }
+  .ranking td:not(:first-child), .ranking th:not(:first-child) { text-align:center; }
+  small { color:var(--suave); }
+  @media (max-width:700px) {
+    thead { display:none; }
+    tr.mod { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; padding:10px 0; border-bottom:1px solid var(--linha); }
+    tr.mod td { border:0; padding:0; }
+    tr.mod td.nome { grid-column:1 / -1; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Área do administrador</h1>
+  <p class="sub">Defina ouro, prata e bronze de cada modalidade. A pontuação e o ranking são recalculados a partir daqui. <a href="./" style="color:var(--destaque)">Ver o site</a></p>
+
+  <section>
+    <h2>Conexão com o GitHub</h2>
+    <div class="grade">
+      <div><label for="ghOwner">Usuário / organização</label><input id="ghOwner" autocomplete="off"></div>
+      <div><label for="ghRepo">Repositório</label><input id="ghRepo" autocomplete="off"></div>
+      <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main" autocomplete="off"></div>
+      <div><label for="ghToken">Token do GitHub</label><input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_..."></div>
+    </div>
+    <p><small>Use um <b>fine-grained token</b> com acesso só a este repositório e permissão <b>Contents: Read and write</b>. Ele fica salvo apenas neste navegador. Não use em computador compartilhado.</small></p>
+    <div class="acoes">
+      <button id="carregar">Carregar dados do GitHub</button>
+      <button id="esquecer" class="perigo">Esquecer token</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Modalidades</h2>
+    <datalist id="listaTimes"></datalist>
+    <table>
+      <thead><tr><th>Modalidade</th><th>Ouro</th><th>Prata</th><th>Bronze</th><th></th></tr></thead>
+      <tbody id="corpo"></tbody>
+    </table>
+    <div class="acoes">
+      <button id="adicionar">+ Adicionar modalidade</button>
+      <button id="salvar" class="principal">Salvar no GitHub</button>
+      <button id="baixar">Baixar medalhas.js</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Prévia do ranking</h2>
+    <table class="ranking">
+      <thead><tr><th>Equipe</th><th>Ouro</th><th>Prata</th><th>Bronze</th><th>Total</th></tr></thead>
+      <tbody id="previa"></tbody>
+    </table>
+  </section>
+
+  <div id="status" role="status" aria-live="polite"></div>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const ARQUIVO = "medalhas.js";
+  const CORES = ["ouro", "prata", "bronze"];
+  const campos = ["ghOwner", "ghRepo", "ghBranch", "ghToken"];
+  let dados = null;
+
+  const store = {
+    get: k => { try { return localStorage.getItem("admin." + k); } catch { return null; } },
+    set: (k, v) => { try { v ? localStorage.setItem("admin." + k, v) : localStorage.removeItem("admin." + k); } catch {} }
+  };
+
+  function status(msg, tipo = "info") { const s = $("status"); s.textContent = msg; s.className = tipo; }
+  const chave = v => String(v || "").trim().normalize("NFD").replace(/[̀-ͯ]/g, "").toLocaleLowerCase("pt-BR");
+
+  // No GitHub Pages: <usuario>.github.io/<repo>/admin.html
+  function detectarRepo() {
+    const host = location.hostname;
+    if (!host.endsWith(".github.io")) return {};
+    const owner = host.split(".")[0];
+    const seg = location.pathname.split("/").filter(Boolean)[0];
+    return { owner, repo: seg && !seg.endsWith(".html") ? seg : host };
+  }
+  function iniciarCampos() {
+    const det = detectarRepo();
+    $("ghOwner").value = store.get("ghOwner") || det.owner || "";
+    $("ghRepo").value = store.get("ghRepo") || det.repo || "";
+    $("ghBranch").value = store.get("ghBranch") || "main";
+    $("ghToken").value = store.get("ghToken") || "";
+    campos.forEach(c => $(c).addEventListener("change", () => store.set(c, $(c).value.trim())));
+  }
+  const gh = () => ({ owner: $("ghOwner").value.trim(), repo: $("ghRepo").value.trim(), branch: $("ghBranch").value.trim() || "main", token: $("ghToken").value.trim() });
+
+  // medalhas.js é JS válido ("window.MEDALHAS = {...}"); roda num window falso só para ler o objeto.
+  function interpretar(texto) {
+    const w = {};
+    new Function("window", texto)(w);
+    if (!w.MEDALHAS || typeof w.MEDALHAS !== "object") throw new Error("medalhas.js não define window.MEDALHAS");
+    return w.MEDALHAS;
+  }
+
+  const b64decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, "")), c => c.charCodeAt(0)));
+  const b64encode = txt => { let s = ""; new TextEncoder().encode(txt).forEach(b => s += String.fromCharCode(b)); return btoa(s); };
+
+  async function api(metodo, corpo) {
+    const { owner, repo, branch, token } = gh();
+    if (!owner || !repo) throw new Error("Preencha usuário e repositório do GitHub.");
+    if (!token) throw new Error("Informe o token do GitHub.");
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${ARQUIVO}` + (metodo === "GET" ? `?ref=${encodeURIComponent(branch)}&t=${Date.now()}` : "");
+    const r = await fetch(url, {
+      method: metodo,
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+      body: corpo ? JSON.stringify(corpo) : undefined,
+      cache: "no-store"
+    });
+    const json = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const dica = r.status === 401 ? " (token inválido ou expirado)" : r.status === 403 ? " (token sem permissão de escrita em Contents)" : r.status === 404 ? " (repositório, branch ou arquivo não encontrado, ou token sem acesso)" : r.status === 409 ? " (o arquivo mudou no GitHub, carregue de novo)" : "";
+      throw new Error(`GitHub respondeu ${r.status}${dica}: ${json.message || ""}`);
+    }
+    return json;
+  }
+
+  async function lerDoGitHub() {
+    const j = await api("GET");
+    return { texto: b64decode(j.content), sha: j.sha };
+  }
+
+  // Sem token: lê o arquivo publicado (pode estar alguns minutos atrasado pelo cache do Pages).
+  function lerPublicado() {
+    return new Promise((resolve, reject) => {
+      delete window.MEDALHAS;
+      const sc = document.createElement("script");
+      sc.src = `${ARQUIVO}?v=${Date.now()}`;
+      sc.onload = () => { sc.remove(); window.MEDALHAS ? resolve(window.MEDALHAS) : reject(new Error("medalhas.js não define window.MEDALHAS")); };
+      sc.onerror = () => { sc.remove(); reject(new Error("Não foi possível ler medalhas.js")); };
+      document.head.appendChild(sc);
+    });
+  }
+
+  /* ---------- tabela ---------- */
+  function linha(nome = "", res = {}) {
+    const tr = document.createElement("tr");
+    tr.className = "mod";
+    const td = (cls, el) => { const c = document.createElement("td"); if (cls) c.className = cls; c.append(el); tr.append(c); return el; };
+    const inp = (valor, ph, lista) => { const i = document.createElement("input"); i.value = valor || ""; i.placeholder = ph; if (lista) i.setAttribute("list", "listaTimes"); i.addEventListener("input", previa); return i; };
+    td("nome", inp(nome, "Ex.: Futsal - Feminino")).dataset.campo = "nome";
+    CORES.forEach(cor => { const i = td("", inp(String(res[cor] || "").trim(), cor[0].toUpperCase() + cor.slice(1), true)); i.dataset.campo = cor; i.classList.add("m-" + cor); i.setAttribute("aria-label", cor); });
+    const rem = document.createElement("button");
+    rem.textContent = "Remover"; rem.className = "perigo"; rem.type = "button";
+    rem.addEventListener("click", () => { if (confirm(`Remover "${tr.querySelector("[data-campo=nome]").value || "modalidade"}"?`)) { tr.remove(); previa(); } });
+    td("", rem);
+    return tr;
+  }
+
+  function desenhar() {
+    $("listaTimes").replaceChildren(...(dados.times || []).map(t => new Option(t.nome || t.id, t.nome || t.id)));
+    $("corpo").replaceChildren(...Object.entries(dados.modalidades || {}).map(([n, r]) => linha(n, r)));
+    previa();
+  }
+
+  function coletar() {
+    const mods = {};
+    for (const tr of $("corpo").querySelectorAll("tr.mod")) {
+      const v = c => tr.querySelector(`[data-campo=${c}]`).value.trim();
+      const nome = v("nome");
+      if (!nome) throw new Error("Há uma modalidade sem nome.");
+      if (mods[nome]) throw new Error(`A modalidade "${nome}" aparece duas vezes.`);
+      mods[nome] = { ouro: v("ouro"), prata: v("prata") };
+      if (v("bronze")) mods[nome].bronze = v("bronze");
+    }
+    return mods;
+  }
+
+  // Mesma regra do script.js: cada campo preenchido vale uma medalha; ID e nome contam como a mesma equipe.
+  function previa() {
+    let mods;
+    try { mods = coletar(); } catch { return; }
+    const alias = new Map(), placar = new Map();
+    for (const t of dados.times || []) {
+      const id = chave(t.id || t.nome);
+      placar.set(id, { nome: t.nome || t.id, ouro: 0, prata: 0, bronze: 0 });
+      [t.id, t.nome].forEach(a => a && alias.set(chave(a), id));
+    }
+    for (const r of Object.values(mods)) for (const cor of CORES) {
+      if (!r[cor]) continue;
+      const id = alias.get(chave(r[cor])) || chave(r[cor]);
+      if (!placar.has(id)) placar.set(id, { nome: r[cor], ouro: 0, prata: 0, bronze: 0, novo: true });
+      placar.get(id)[cor]++;
+    }
+    const ord = [...placar.values()].sort((a, b) => b.ouro - a.ouro || b.prata - a.prata || b.bronze - a.bronze || a.nome.localeCompare(b.nome));
+    $("previa").replaceChildren(...ord.map(p => {
+      const tr = document.createElement("tr");
+      [p.nome + (p.novo ? " (não cadastrada)" : ""), p.ouro, p.prata, p.bronze, p.ouro + p.prata + p.bronze].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.append(td); });
+      return tr;
+    }));
+  }
+
+  /* ---------- gravar ---------- */
+  function blocoModalidades(mods) {
+    const s = JSON.stringify;
+    const linhas = Object.entries(mods).map(([n, r]) =>
+      `    ${s(n)}: { ouro: ${s(r.ouro)}, prata: ${s(r.prata)}${r.bronze ? `, bronze: ${s(r.bronze)}` : ""} }`);
+    return `modalidades: {\n${linhas.join(",\n")}\n  }\n`;
+  }
+
+  // Troca só o bloco "modalidades" (o último do arquivo) e preserva config, times e comentários.
+  function montarArquivo(textoAtual, mods) {
+    const ini = textoAtual.search(/modalidades\s*:\s*\{/);
+    const fim = textoAtual.lastIndexOf("};");
+    if (ini < 0 || fim < ini) throw new Error("Não achei o bloco \"modalidades\" no medalhas.js.");
+    const novo = textoAtual.slice(0, ini) + blocoModalidades(mods) + textoAtual.slice(fim);
+    interpretar(novo); // garante que o arquivo continua válido antes de enviar
+    return novo;
+  }
+
+  async function ocupado(btn, fn) {
+    document.querySelectorAll("button").forEach(b => b.disabled = true);
+    try { await fn(); } catch (e) { status("Erro: " + e.message, "erro"); }
+    finally { document.querySelectorAll("button").forEach(b => b.disabled = false); }
+  }
+
+  $("carregar").addEventListener("click", () => ocupado(null, async () => {
+    status("Carregando do GitHub...");
+    const { texto } = await lerDoGitHub();
+    dados = interpretar(texto);
+    desenhar();
+    status("Dados carregados do GitHub.", "ok");
+  }));
+
+  $("salvar").addEventListener("click", () => ocupado(null, async () => {
+    const mods = coletar();
+    status("Salvando...");
+    const { texto, sha } = await lerDoGitHub(); // versão mais nova, para não sobrescrever outra edição
+    const novo = montarArquivo(texto, mods);
+    if (novo === texto) { status("Nada mudou.", "ok"); return; }
+    await api("PUT", { message: "Atualiza medalhas pelo painel admin", content: b64encode(novo), sha, branch: gh().branch });
+    dados = interpretar(novo);
+    status("Salvo! O GitHub Pages publica em cerca de 1 minuto e o placar se atualiza sozinho.", "ok");
+  }));
+
+  $("baixar").addEventListener("click", () => ocupado(null, async () => {
+    const mods = coletar();
+    let base;
+    try { base = (await lerDoGitHub()).texto; } catch { base = await (await fetch(`${ARQUIVO}?v=${Date.now()}`, { cache: "no-store" })).text(); }
+    const blob = new Blob([montarArquivo(base, mods)], { type: "text/javascript" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: ARQUIVO });
+    a.click(); URL.revokeObjectURL(a.href);
+    status("Arquivo baixado. Envie-o para o repositório substituindo o medalhas.js.", "ok");
+  }));
+
+  $("adicionar").addEventListener("click", () => { const tr = linha(); $("corpo").append(tr); tr.querySelector("input").focus(); });
+  $("esquecer").addEventListener("click", () => { store.set("ghToken", ""); $("ghToken").value = ""; status("Token apagado deste navegador.", "ok"); });
+
+  window.addEventListener("beforeunload", e => {
+    if (!dados) return;
+    try { if (JSON.stringify(coletar()) !== JSON.stringify(normalizar(dados.modalidades))) e.preventDefault(); } catch { e.preventDefault(); }
+  });
+  function normalizar(m) {
+    const o = {};
+    for (const [n, r] of Object.entries(m || {})) { o[n.trim()] = { ouro: String(r.ouro || "").trim(), prata: String(r.prata || "").trim() }; if (String(r.bronze || "").trim()) o[n.trim()].bronze = String(r.bronze).trim(); }
+    return o;
+  }
+
+  iniciarCampos();
+  (async () => {
+    try {
+      if (gh().token) { const { texto } = await lerDoGitHub(); dados = interpretar(texto); }
+      else dados = await lerPublicado();
+      desenhar();
+      if (!gh().token) status("Dados lidos do site publicado. Informe o token para salvar.", "info");
+    } catch (e) {
+      try { dados = await lerPublicado(); desenhar(); status("Não consegui ler do GitHub (" + e.message + "). Mostrando a versão publicada.", "erro"); }
+      catch (e2) { status("Erro ao carregar: " + e2.message, "erro"); }
+    }
+  })();
+})();
+</script>
+</body>
+</html>

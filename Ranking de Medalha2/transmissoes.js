@@ -10,11 +10,11 @@
   let salaCarregada = "";
   const ROOM_NAMESPACE = "";
   const base = "https://vdo.ninja/";
-  // Nome legível e previsível. Tênis de Mesa usa exatamente a sala solicitada.
+  // Nome legível e previsível, uma sala por modalidade.
   function salaId(nome) {
     const normal = String(nome || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const esporte = normal.replace(/\s*[-–]\s*(feminino|masculino)\s*$/i, "");
-    const slug = esporte.replace(/[^a-z0-9]+/g, "").slice(0, 49 - ROOM_NAMESPACE.length);
+    // O gênero faz parte da sala: Feminino e Masculino nunca compartilham câmeras.
+    const slug = normal.replace(/[^a-z0-9]+/g, "").slice(0, 49 - ROOM_NAMESPACE.length);
     return ROOM_NAMESPACE + (slug || "geral");
   }
   function url(params) {
