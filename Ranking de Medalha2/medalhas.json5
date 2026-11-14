@@ -13,7 +13,7 @@
     corDestaque: "#ff9a1a",        // laranja
 
     intro: true,                   // false = pula a animação de abertura
-    introSegundos: 5.6,            // duração da intro antes de abrir o quadro
+    introSegundos: 4.2,            // duração da intro antes de abrir o quadro
     introTexto: "Vila Olímpica · 2 de Novembro",
 
     atualizarSegundos: 30,         // recarrega este arquivo sozinho (0 = desligado)

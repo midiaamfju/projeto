@@ -12,13 +12,13 @@ window.MEDALHAS = {
     //data: "2 de Novembro às 7H",
     //local: "Vila Olímpica · Av. Pedro Teixeira - Dom Pedro",
 
-    logo: "img/logo.png",          // logo principal (intro + topo)
+    logo: "img/logo-sem-sombra.png", // logo principal (intro + topo); original com sombra: img/logo.png
     logoSecundaria: "",            // opcional (ex.: "img/fju.png")
     fundo: "",                     // imagem de fundo (vazio = degradê roxo)
     corDestaque: "#ff9a1a",        // laranja
 
     intro: true,                   // false = pula a animação de abertura
-    introSegundos: 5.6,            // duração da intro antes de abrir o quadro
+    introSegundos: 4.2,            // duração da intro antes de abrir o quadro
     //introTexto: "Vila Olímpica · 2 de Novembro",
 
     atualizarSegundos: 30,         // recarrega este arquivo sozinho (0 = desligado)

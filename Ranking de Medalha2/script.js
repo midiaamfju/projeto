@@ -132,11 +132,8 @@ function intro(cfg = {}) {
   const el = $("intro");
   const params = new URLSearchParams(location.search);
   if (location.protocol === "file:") document.documentElement.classList.add("arquivo");
-  // A abertura roda uma vez por sessão do navegador; ?intro=1 força de novo.
-  const jaViu = (() => { try { return sessionStorage.getItem("introVista") === "1"; } catch { return false; } })();
   const pular =
     cfg.intro === false || params.get("intro") === "0" ||
-    (jaViu && params.get("intro") !== "1") ||
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (!el || pular) {
@@ -146,7 +143,6 @@ function intro(cfg = {}) {
   }
 
   return new Promise(async (resolve) => {
-    try { sessionStorage.setItem("introVista", "1"); } catch {}
     $("introTexto").textContent = cfg.introTexto || cfg.subtitulo || "";
 
     // faíscas que explodem a partir do centro
@@ -163,10 +159,9 @@ function intro(cfg = {}) {
       sparks.appendChild(s);
     }
 
-    // garante que a logo carregou antes de animar
-    const img = new Image();
-    img.src = cfg.logo || "img/logo.png";
-    await Promise.race([img.decode().catch(() => {}), espera(2500)]);
+    // espera as camadas da logo decodificarem para a animação não engasgar no começo
+    const camadas = [...document.querySelectorAll("#logoAnimada .camada")];
+    await Promise.race([Promise.all(camadas.map(c => c.decode().catch(() => {}))), espera(2500)]);
 
     let fim = false;
     const terminar = () => {
@@ -176,10 +171,10 @@ function intro(cfg = {}) {
       el.classList.add("saindo");
       document.body.classList.remove("aguarda");
       el.addEventListener("animationend", () => el.remove(), { once: true });
-      setTimeout(() => el.remove(), 1500);
+      setTimeout(() => el.remove(), 1000);
       resolve();
     };
-    const t = setTimeout(terminar, Math.max(4, Number(cfg.introSegundos) || 5.6) * 1000);
+    const t = setTimeout(terminar, Math.max(3, Number(cfg.introSegundos) || 4.2) * 1000);
     el.addEventListener("click", terminar);
     $("pular").addEventListener("click", terminar);
 

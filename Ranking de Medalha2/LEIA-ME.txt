@@ -141,8 +141,12 @@ V11 — MELHORIAS NO SITE
   "Sem 3º lugar (empate acima)".
 - Siglas únicas nos escudos sem imagem (ex.: NOROESTE = NO, NORTE = NT).
 - Barra "X de Y com resultado": conta modalidades que já têm ouro.
-- A abertura aparece uma vez por sessão do navegador. Para ver de novo,
-  abra o site com ?intro=1 no fim do endereço (ou ?intro=0 para nunca ver).
+- A abertura aparece em toda visita. Para pular, abra o site com ?intro=0
+  no fim do endereço (ou desligue em medalhas.js: intro: false).
+- A logo da abertura é montada com as imagens de img/logo-camadas (escudo,
+  bolas, troféu e letras entram em sequência). Elas são geradas a partir de
+  img/logo.svg. Se trocar a logo SVG, rode (precisa do Chrome ou Edge):
+      node ferramentas/gerar-logo-animada.js
 - No celular o pódio fica um cartão por linha, com o 1º lugar em cima.
 
 ESCUDOS DAS EQUIPES
