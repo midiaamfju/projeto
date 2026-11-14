@@ -33,6 +33,44 @@ function iniciais(nome = "") {
   if (!w.length) return "?";
   return (w.length === 1 ? w[0].slice(0, 2) : w[0][0] + w[w.length - 1][0]).toUpperCase();
 }
+/* Siglas únicas: NOROESTE e NORTE dariam "NO" para as duas. A primeira em ordem
+   alfabética fica com as iniciais; as seguintes usam a primeira letra + uma
+   consoante do fim do nome (NORTE -> "NT"), sem repetir nenhuma sigla. */
+let siglas = new Map();
+function calcularSiglas(nomes) {
+  const unicos = [...new Set(nomes.map(n => String(n || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const base = new Map(unicos.map(n => [n, iniciais(n)]));
+  const reservadas = new Set(base.values()), usadas = new Set(), mapa = new Map();
+  for (const n of unicos) {
+    let s = base.get(n);
+    if (usadas.has(s)) {
+      const letras = n.normalize("NFD").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+      const resto = [...letras.slice(1)].reverse();
+      const ordem = [...resto.filter(c => !"AEIOU".includes(c)), ...resto].map(c => letras[0] + c);
+      s = ordem.find(c => !usadas.has(c) && !reservadas.has(c)) || ordem.find(c => !usadas.has(c));
+      // shortcut: sem combinação de 2 letras livre, numera ("NO2"); só acontece com nomes quase iguais.
+      for (let i = 2; !s || usadas.has(s); i++) s = base.get(n) + i;
+    }
+    usadas.add(s);
+    mapa.set(n, s);
+  }
+  return mapa;
+}
+const sigla = nome => siglas.get(String(nome || "").trim()) || iniciais(nome);
+
+/* Barra "X de Y modalidades com resultado" (uma modalidade conta quando tem ouro). */
+function atualizarProgresso(modalidades = {}) {
+  const lista = Object.values(modalidades || {});
+  const feitas = lista.filter(r => String(r?.ouro || "").trim()).length;
+  const box = $("progresso");
+  if (!box) return;
+  box.hidden = !lista.length;
+  $("progressoTexto").textContent = `${feitas} de ${lista.length} com resultado`;
+  const barra = $("progressoBarra");
+  barra.setAttribute("aria-valuemax", lista.length);
+  barra.setAttribute("aria-valuenow", feitas);
+  barra.style.setProperty("--feito", lista.length ? feitas / lista.length : 0);
+}
 function contar(el, de, para) {
   const dur = 1050, ini = performance.now();
   (function passo(t) {
@@ -94,8 +132,11 @@ function intro(cfg = {}) {
   const el = $("intro");
   const params = new URLSearchParams(location.search);
   if (location.protocol === "file:") document.documentElement.classList.add("arquivo");
+  // A abertura roda uma vez por sessão do navegador; ?intro=1 força de novo.
+  const jaViu = (() => { try { return sessionStorage.getItem("introVista") === "1"; } catch { return false; } })();
   const pular =
     cfg.intro === false || params.get("intro") === "0" ||
+    (jaViu && params.get("intro") !== "1") ||
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (!el || pular) {
@@ -105,6 +146,7 @@ function intro(cfg = {}) {
   }
 
   return new Promise(async (resolve) => {
+    try { sessionStorage.setItem("introVista", "1"); } catch {}
     $("introTexto").textContent = cfg.introTexto || cfg.subtitulo || "";
 
     // faíscas que explodem a partir do centro
@@ -161,13 +203,14 @@ function criarLinha(i) {
 function colocarEscudo(li, p) {
   const box = li.querySelector(".escudo");
   const url = urlImagem(p);
-  if (box.dataset.src === url && box.firstChild) return;
-  box.dataset.src = url;
+  const chaveEscudo = url + "|" + sigla(p.nome);
+  if (box.dataset.src === chaveEscudo && box.firstChild) return;
+  box.dataset.src = chaveEscudo;
   box.innerHTML = "";
   const selo = () => {
     const d = document.createElement("span");
     d.className = "selo";
-    d.textContent = iniciais(p.nome);
+    d.textContent = sigla(p.nome);
     return d;
   };
   if (!url) { box.appendChild(selo()); return; }
@@ -217,7 +260,7 @@ function atualizarDestaques(ordenados) {
     posicao,
     equipes: ordenados.filter(p => p.posicao === posicao && p.total > 0)
   }));
-  const chaves = JSON.stringify(grupos.map(g => [g.posicao, g.equipes.map(p => [p.id || p.nome, p.nome, p.total, urlImagem(p)])]));
+  const chaves = JSON.stringify(grupos.map(g => [g.posicao, g.equipes.map(p => [p.id || p.nome, p.nome, p.total, urlImagem(p), sigla(p.nome)])]));
   if (podio.dataset.equipes !== chaves) {
     podio.dataset.equipes = chaves;
     podio.replaceChildren();
@@ -234,7 +277,10 @@ function atualizarDestaques(ordenados) {
       if (!equipes.length) {
         const vazio = document.createElement("div");
         vazio.className = "podio-vazio";
-        vazio.textContent = "A definir";
+        // Com empate acima (ex.: dois em 2º), a posição seguinte não existe no critério olímpico.
+        const pulada = ordenados.some(p => p.posicao > posicao && p.total > 0);
+        vazio.textContent = pulada ? `Sem ${posicao}º lugar (empate acima)` : "A definir";
+        item.classList.add("podio-sem-equipe");
         pessoas.appendChild(vazio);
       }
       equipes.forEach(p => {
@@ -247,9 +293,9 @@ function atualizarDestaques(ordenados) {
           const img = document.createElement("img");
           img.alt = "";
           img.src = src;
-          img.onerror = () => { imagem.replaceChildren(document.createTextNode(iniciais(p.nome))); };
+          img.onerror = () => { imagem.replaceChildren(document.createTextNode(sigla(p.nome))); };
           imagem.appendChild(img);
-        } else imagem.textContent = iniciais(p.nome);
+        } else imagem.textContent = sigla(p.nome);
         const nome = document.createElement("div");
         nome.className = "podio-nome";
         nome.textContent = p.nome;
@@ -344,13 +390,15 @@ $("modalidadeSelect").addEventListener("change", event => {
 
 /* ---------- render com troca de posição animada (FLIP) ---------- */
 function render(dados) {
-  window.dispatchEvent(new CustomEvent("esportejovem:dados", { detail: { modalidades: Object.keys(dados.modalidades || {}) } }));
+  window.dispatchEvent(new CustomEvent("esportejovem:dados", { detail: { modalidades: Object.keys(dados.modalidades || {}), salaPrefixo: dados.config?.salaPrefixo } }));
   const cfg = dados.config || {};
   aplicarConfig(cfg);
 
   dadosAtuais = dados;
   atualizarSeletor(dados);
   const lista_ = dados.modalidades ? medalhasPorModalidade(dados) : (dados.times || dados.paises || []);
+  siglas = calcularSiglas([...(dados.times || []).map(t => t.nome || t.id), ...lista_.map(p => p.nome)]);
+  atualizarProgresso(dados.modalidades);
   const aviso = $("avisoCadastro");
   aviso.hidden = !avisosCadastro.length;
   aviso.textContent = avisosCadastro.join(" ");
@@ -358,13 +406,13 @@ function render(dados) {
     ((b.ouro ?? 0) - (a.ouro ?? 0)) || ((b.prata ?? 0) - (a.prata ?? 0)) || ((b.bronze ?? 0) - (a.bronze ?? 0)) ||
     String(a.nome).localeCompare(String(b.nome),"pt-BR"));
 
-  // Classificação de competição: totais idênticos de ouro/prata/bronze = mesma posição.
-  // Ranking denso: 1º, 2º, 2º, 3º, 4º. Ordem alfabética somente organiza visualmente os empatados.
+  // Critério olímpico: mesmos ouro/prata/bronze = mesma posição, e a seguinte pula
+  // os empatados (1º, 2º, 2º, 4º). Ordem alfabética só organiza visualmente os empatados.
   let ultimaPontuacao = null;
   let ultimaPosicao = 0;
   ordenados.forEach((equipe, indice) => {
     const pontuacao = [Number(equipe.ouro || 0), Number(equipe.prata || 0), Number(equipe.bronze || 0)].join("/");
-    if (pontuacao !== ultimaPontuacao) ultimaPosicao += 1;
+    if (pontuacao !== ultimaPontuacao) ultimaPosicao = indice + 1;
     equipe.posicao = ultimaPosicao;
     ultimaPontuacao = pontuacao;
   });
@@ -416,7 +464,7 @@ async function carregar() {
     dadosAtuais = dados;
     const modalidades = Object.keys(dados.modalidades || {});
     // A lista de modalidades é sincronizada até durante a transmissão.
-    window.dispatchEvent(new CustomEvent("esportejovem:dados", { detail: { modalidades } }));
+    window.dispatchEvent(new CustomEvent("esportejovem:dados", { detail: { modalidades, salaPrefixo: dados.config?.salaPrefixo } }));
     $("erro").hidden = true;
 
     if (primeira) {

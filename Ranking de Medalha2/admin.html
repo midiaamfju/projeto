@@ -4,125 +4,313 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#190d29">
+<meta name="theme-color" content="#150a24">
 <title>Admin · Quadro de Medalhas</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#190d29; --card:#24143a; --linha:#3a2657; --texto:#f3ecff; --suave:#b9a6d6; --destaque:#ff9a1a; --ok:#3ecf8e; --erro:#ff5d6c; }
+  :root {
+    --bg:#150a24; --painel:#1e1131; --painel-2:#261640; --campo:#120820;
+    --linha:#33224d; --linha-forte:#4a3470;
+    --texto:#f4eefc; --suave:#a996c4; --fraco:#9483b0;
+    --destaque:#ff9a1a; --destaque-escuro:#e07f00;
+    --ouro:#f2c14e; --prata:#cfd4de; --bronze:#d08a55;
+    --ok:#3ecf8e; --erro:#ff6b7a; --aviso:#ffb547;
+    --raio:12px; --sombra:0 1px 0 rgba(255,255,255,.03) inset, 0 10px 30px -18px rgba(0,0,0,.8);
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--texto); }
-  main { max-width:1100px; margin:0 auto; padding:24px 16px 80px; }
-  h1 { margin:0 0 4px; font-size:26px; }
-  h2 { font-size:18px; margin:0 0 12px; }
-  p.sub { margin:0 0 20px; color:var(--suave); }
-  section { background:var(--card); border:1px solid var(--linha); border-radius:12px; padding:16px; margin-bottom:16px; }
-  label { display:block; font-size:13px; color:var(--suave); margin-bottom:4px; }
-  input { width:100%; padding:9px 10px; border-radius:8px; border:1px solid var(--linha); background:#140a22; color:var(--texto); font:inherit; }
-  input:focus { outline:2px solid var(--destaque); outline-offset:1px; }
-  .grade { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
-  button { padding:9px 14px; border-radius:8px; border:1px solid var(--linha); background:#33204f; color:var(--texto); font:inherit; font-weight:600; cursor:pointer; }
-  button:hover { border-color:var(--destaque); }
-  button.principal { background:var(--destaque); color:#1d1030; border-color:var(--destaque); }
-  button.perigo { color:var(--erro); }
-  button:disabled { opacity:.5; cursor:wait; }
-  .acoes { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-  table { width:100%; border-collapse:collapse; }
-  th, td { padding:6px; text-align:left; border-bottom:1px solid var(--linha); vertical-align:middle; }
-  th { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); }
-  td.nome input, tr.eq input { font-weight:600; }
-  td.id { color:var(--suave); font-size:13px; white-space:nowrap; width:1%; }
-  .m-ouro { border-left:4px solid #e7b73a; } .m-prata { border-left:4px solid #c9ccd6; } .m-bronze { border-left:4px solid #c27a45; }
-  #status { position:sticky; bottom:12px; padding:12px 14px; border-radius:10px; background:#140a22; border:1px solid var(--linha); display:none; }
-  #status.ok { display:block; border-color:var(--ok); } #status.erro { display:block; border-color:var(--erro); } #status.info { display:block; }
-  .ranking td:not(:first-child), .ranking th:not(:first-child) { text-align:center; }
-  small { color:var(--suave); }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; font:14px/1.5 Inter,system-ui,sans-serif; background:var(--bg); color:var(--texto);
+         background-image:radial-gradient(1200px 500px at 85% -10%, rgba(255,154,26,.07), transparent 60%), radial-gradient(900px 500px at -10% 0%, rgba(140,80,255,.10), transparent 60%); background-attachment:fixed; }
+  h1, h2 { font-family:"Barlow Condensed",Inter,sans-serif; letter-spacing:.01em; margin:0; }
+  h2 { font-size:22px; line-height:1.1; }
+  a { color:var(--destaque); }
+  small, .ajuda { color:var(--suave); font-size:13px; }
+  .num { font-variant-numeric:tabular-nums; }
+  .so-leitor { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+  /* ---------- barra superior ---------- */
+  .topo { position:sticky; top:0; z-index:20; background:rgba(21,10,36,.86); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--linha); }
+  .topo-in { max-width:1360px; margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:16px; }
+  .marca { display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none; min-width:0; margin-right:auto; }
+  .marca img { width:40px; height:40px; object-fit:contain; flex:none; }
+  .marca span { display:flex; flex-direction:column; min-width:0; }
+  .marca strong { font:800 20px/1.05 "Barlow Condensed",sans-serif; text-transform:uppercase; letter-spacing:.03em; }
+  .marca small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12px; }
+  .topo-acoes { display:flex; align-items:center; gap:8px; flex:none; }
+  .estado { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--suave); padding:0 6px; white-space:nowrap; }
+  .estado::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--ok); }
+  .estado[data-estado="sujo"] { color:var(--aviso); }
+  .estado[data-estado="sujo"]::before { background:var(--aviso); box-shadow:0 0 0 4px rgba(255,181,71,.15); }
+
+  /* ---------- botões ---------- */
+  button, .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; height:38px; padding:0 14px; border-radius:9px; border:1px solid var(--linha-forte); background:var(--painel-2); color:var(--texto); font:600 14px/1 Inter,sans-serif; cursor:pointer; text-decoration:none; white-space:nowrap; transition:background .15s, border-color .15s, color .15s; }
+  button:hover, .btn:hover { border-color:var(--destaque); }
+  button:focus-visible, .btn:focus-visible, summary:focus-visible { outline:2px solid var(--destaque); outline-offset:2px; }
+  button.principal { background:var(--destaque); border-color:var(--destaque); color:#1b0d2e; }
+  button.principal:hover { background:var(--destaque-escuro); border-color:var(--destaque-escuro); }
+  button.fantasma, .btn.fantasma { background:transparent; border-color:transparent; color:var(--suave); }
+  button.fantasma:hover, .btn.fantasma:hover { color:var(--texto); background:var(--painel-2); border-color:var(--linha); }
+  button.perigo { background:transparent; color:var(--erro); border-color:rgba(255,107,122,.35); }
+  button.perigo:hover { background:rgba(255,107,122,.1); border-color:var(--erro); }
+  button:disabled { opacity:.55; cursor:progress; }
+  .remover { width:34px; height:34px; padding:0; border-color:transparent; background:transparent; color:var(--fraco); }
+  .remover:hover { color:var(--erro); background:rgba(255,107,122,.1); border-color:transparent; }
+  button svg, .btn svg { width:16px; height:16px; flex:none; }
+
+  /* ---------- estrutura ---------- */
+  .layout { max-width:1360px; margin:0 auto; padding:24px; display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:24px; align-items:start; }
+  main { display:flex; flex-direction:column; gap:20px; min-width:0; }
+  aside { position:sticky; top:84px; }
+  .card { background:var(--painel); border:1px solid var(--linha); border-radius:var(--raio); box-shadow:var(--sombra); }
+  .card-cab { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:16px 20px; border-bottom:1px solid var(--linha); }
+  .card-cab .contador { color:var(--suave); font-size:13px; margin-right:auto; }
+  .card-corpo { padding:16px 20px 20px; }
+  .ajuda { margin:0 0 14px; }
+
+  /* ---------- campos ---------- */
+  label { display:block; font-size:12px; font-weight:600; color:var(--suave); margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em; }
+  input { width:100%; height:38px; padding:0 11px; border-radius:8px; border:1px solid var(--linha); background:var(--campo); color:var(--texto); font:500 14px Inter,sans-serif; transition:border-color .15s, box-shadow .15s; }
+  input::placeholder { color:var(--fraco); font-weight:400; }
+  input:hover { border-color:var(--linha-forte); }
+  input:focus { outline:none; border-color:var(--destaque); box-shadow:0 0 0 3px rgba(255,154,26,.18); }
+  .busca { position:relative; width:min(240px,100%); margin:0; }
+  .busca svg { position:absolute; left:10px; top:50%; translate:0 -50%; width:15px; height:15px; color:var(--fraco); pointer-events:none; }
+  .busca input { padding-left:32px; height:38px; text-transform:none; letter-spacing:0; }
+
+  /* ---------- conexão (recolhível) ---------- */
+  details.card > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:12px; padding:16px 20px; border-radius:var(--raio); }
+  details.card > summary::-webkit-details-marker { display:none; }
+  details.card > summary .seta { margin-left:auto; color:var(--suave); transition:transform .2s; width:18px; height:18px; flex:none; }
+  details[open].card > summary { border-bottom:1px solid var(--linha); border-radius:var(--raio) var(--raio) 0 0; }
+  details[open].card > summary .seta { transform:rotate(180deg); }
+  .resumo { font-size:13px; color:var(--suave); display:inline-flex; align-items:center; gap:7px; min-width:0; }
+  .resumo::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--fraco); flex:none; }
+  .resumo[data-ok="1"]::before { background:var(--ok); }
+  .grade { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+  .grade .largo { grid-column:span 2; }
   .com-info { display:flex; align-items:center; gap:6px; }
-  .info { position:relative; display:inline-flex; }
-  .info-btn { width:20px; height:20px; padding:0; border-radius:50%; font:italic 700 12px/1 Georgia,serif; color:var(--destaque); border-color:var(--destaque); background:transparent; }
+  .info { position:relative; display:inline-flex; text-transform:none; letter-spacing:0; font-weight:400; }
+  .info-btn { width:18px; height:18px; padding:0; border-radius:50%; font:italic 700 11px/1 Georgia,serif; color:var(--destaque); border:1px solid var(--destaque); background:transparent; }
   /* position:fixed + JS (posicionarDica) mantém o balão dentro da janela em qualquer largura. */
-  .dica { display:none; position:fixed; z-index:10; top:0; left:0; width:min(320px, calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; padding:12px; border-radius:10px; background:#140a22; border:1px solid var(--destaque); color:var(--texto); font-size:13px; line-height:1.45; box-shadow:0 8px 24px rgba(0,0,0,.45); }
-  .dica ul { margin:6px 0; padding-left:18px; }
+  .dica { display:none; position:fixed; z-index:30; top:0; left:0; width:min(340px, calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; padding:14px; border-radius:10px; background:#0f0719; border:1px solid var(--linha-forte); color:var(--texto); font-size:13px; line-height:1.5; box-shadow:0 18px 40px -10px rgba(0,0,0,.7); }
+  .dica ul { margin:8px 0; padding-left:18px; }
+  .dica li { margin-bottom:4px; }
   .info:hover .dica, .info:focus-within .dica { display:block; }
-  @media (max-width:700px) {
-    thead { display:none; }
-    tr.mod { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; padding:10px 0; border-bottom:1px solid var(--linha); }
-    tr.mod td { border:0; padding:0; }
-    tr.mod td.nome { grid-column:1 / -1; }
+  .barra-acoes { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+
+  /* ---------- equipes ---------- */
+  .equipes { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px; }
+  .eq { display:flex; align-items:center; gap:4px; padding:4px 4px 4px 12px; border:1px solid var(--linha); border-radius:10px; background:var(--campo); transition:border-color .15s; }
+  .eq:hover { border-color:var(--linha-forte); }
+  .eq:focus-within { border-color:var(--destaque); }
+  .eq .id { font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--fraco); white-space:nowrap; text-transform:uppercase; }
+  .eq input { border-color:transparent; background:transparent; font-weight:700; padding:0 6px; height:34px; }
+  .eq input:hover, .eq input:focus { border-color:transparent; box-shadow:none; }
+
+  /* ---------- modalidades ---------- */
+  table { width:100%; border-collapse:collapse; }
+  .tabela-mod { table-layout:fixed; }
+  .tabela-mod col.c-nome { width:31%; } .tabela-mod col.c-acao { width:46px; }
+  .tabela-mod th { padding:0 8px 10px; text-align:left; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--suave); white-space:nowrap; }
+  .tabela-mod th img { width:20px; height:20px; vertical-align:-5px; margin-right:6px; }
+  .tabela-mod td { padding:5px 8px; border-top:1px solid var(--linha); vertical-align:middle; }
+  .tabela-mod tr.mod:hover td { background:rgba(255,255,255,.018); }
+  td.nome input { font-weight:600; border-color:transparent; background:transparent; padding:0 6px; text-overflow:ellipsis; }
+  td.nome input:hover { border-color:var(--linha); background:var(--campo); }
+  td.nome input:focus { background:var(--campo); }
+  .m-ouro, .m-prata, .m-bronze { box-shadow:inset 3px 0 0 var(--cor); }
+  .m-ouro { --cor:var(--ouro); } .m-prata { --cor:var(--prata); } .m-bronze { --cor:var(--bronze); }
+  .m-ouro:focus, .m-prata:focus, .m-bronze:focus { box-shadow:inset 3px 0 0 var(--cor), 0 0 0 3px rgba(255,154,26,.18); }
+  .vazio { padding:28px 8px 8px; margin:0; text-align:center; color:var(--suave); }
+
+  /* ---------- prévia do ranking ---------- */
+  .ranking th { padding:0 4px 10px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--suave); text-align:center; }
+  .ranking th:nth-child(2) { text-align:left; }
+  .ranking th img { width:18px; height:18px; display:block; margin:0 auto; }
+  .ranking td { padding:9px 4px; border-top:1px solid var(--linha); text-align:center; }
+  .ranking td.equipe { text-align:left; font-weight:600; overflow-wrap:anywhere; }
+  .ranking td.pos { width:28px; color:var(--fraco); font-weight:700; }
+  .ranking tr.podio-1 td.pos { color:var(--ouro); } .ranking tr.podio-2 td.pos { color:var(--prata); } .ranking tr.podio-3 td.pos { color:var(--bronze); }
+  .ranking td.total { font-weight:800; }
+  .ranking td.zero { color:var(--fraco); }
+  .selo { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:99px; font-size:11px; font-weight:600; color:var(--aviso); background:rgba(255,181,71,.12); vertical-align:1px; }
+
+  /* ---------- transmissões ---------- */
+  .prefixo-linha { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+  .prefixo-entrada { display:flex; align-items:center; gap:6px; font:700 18px/1 ui-monospace,Consolas,monospace; color:var(--suave); }
+  .prefixo-entrada input { width:84px; text-align:center; font:700 18px ui-monospace,Consolas,monospace; letter-spacing:.12em; }
+  .prefixo-entrada input:invalid { border-color:var(--erro); }
+  .prefixo-exemplo { display:block; padding:10px 12px; border-radius:8px; background:var(--campo); border:1px solid var(--linha); color:var(--suave); font:13px ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
+  .prefixo-exemplo b { color:var(--destaque); font-weight:700; }
+
+  /* ---------- notificação ---------- */
+  #status { position:fixed; right:24px; bottom:24px; z-index:40; width:min(440px, calc(100vw - 32px)); display:flex; align-items:flex-start; gap:10px; padding:10px 10px 10px 16px; border-radius:10px; background:#0f0719; border:1px solid var(--linha-forte); border-left:4px solid var(--suave); box-shadow:0 18px 40px -10px rgba(0,0,0,.7); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .2s, transform .2s; }
+  #status.ok, #status.erro, #status.info { opacity:1; transform:none; pointer-events:auto; }
+  #status.ok { border-left-color:var(--ok); } #status.erro { border-left-color:var(--erro); }
+  #status .texto { flex:1; padding-top:6px; overflow-wrap:anywhere; }
+  #status .fechar { width:30px; height:30px; padding:0; border-color:transparent; background:transparent; color:var(--suave); flex:none; }
+
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+
+  @media (max-width:1100px) {
+    .layout { grid-template-columns:1fr; }
+    aside { position:static; }
+    .grade { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:720px) {
+    .topo-in { padding:10px 16px; gap:10px; }
+    .marca img { width:34px; height:34px; }
+    .marca small, .estado .rotulo, .esconde-mobile { display:none; }
+    .layout { padding:16px; gap:16px; }
+    .card-cab, .card-corpo, details.card > summary { padding-left:16px; padding-right:16px; }
+    .grade { grid-template-columns:1fr; } .grade .largo { grid-column:auto; }
+    .busca { width:100%; order:5; }
+    .tabela-mod, .tabela-mod tbody { display:block; }
+    .tabela-mod colgroup, .tabela-mod thead { display:none; }
+    tr.mod { position:relative; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; padding:12px 0; border-top:1px solid var(--linha); }
+    tr.mod:first-child { border-top:0; padding-top:0; }
+    tr.mod td { border:0; padding:0; display:block; }
+    tr.mod[hidden] { display:none; }
+    tr.mod td.nome { grid-column:1 / -1; padding-right:40px; }
+    tr.mod td.nome input { padding:0; font-size:15px; }
+    tr.mod td:last-child { position:absolute; top:12px; right:0; }
+    tr.mod:first-child td:last-child { top:0; }
+    #status { left:16px; right:16px; bottom:16px; width:auto; }
   }
 </style>
 </head>
 <body>
+<header class="topo">
+  <div class="topo-in">
+    <a class="marca" href="./" title="Abrir o quadro de medalhas">
+      <img src="img/logo.png" alt="">
+      <span><strong>Painel de resultados</strong><small id="tituloEvento">Quadro de Medalhas</small></span>
+    </a>
+    <div class="topo-acoes">
+      <span id="sujo" class="estado" data-estado="salvo"><span class="rotulo">Tudo salvo</span></span>
+      <a class="btn fantasma esconde-mobile" href="./" target="_blank" rel="noopener">Ver site</a>
+      <button id="baixar" type="button" title="Baixar medalhas.js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg><span class="esconde-mobile">Baixar</span><span class="so-leitor">medalhas.js</span></button>
+      <button id="salvar" type="button" class="principal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Salvar<span class="esconde-mobile"> no GitHub</span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
 <main>
-  <h1>Área do administrador</h1>
-  <p class="sub">Defina ouro, prata e bronze de cada modalidade. A pontuação e o ranking são recalculados a partir daqui. <a href="./" style="color:var(--destaque)">Ver o site</a></p>
-
-  <section>
-    <h2>Conexão com o GitHub</h2>
-    <div class="grade">
-      <div><label for="ghOwner">Usuário / organização</label><input id="ghOwner" autocomplete="off"></div>
-      <div><label for="ghRepo">Repositório</label><input id="ghRepo" autocomplete="off"></div>
-      <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main" autocomplete="off"></div>
-      <div><label for="ghPath">Caminho do arquivo</label><input id="ghPath" value="medalhas.js" autocomplete="off"></div>
-      <div>
-        <label for="ghToken" class="com-info">Token do GitHub
-          <span class="info">
-            <button type="button" class="info-btn" aria-label="Permissões necessárias do token" aria-describedby="dicaToken">i</button>
-            <span id="dicaToken" role="tooltip" class="dica">
-              <b>Permissões necessárias</b> (Fine-grained token):
-              <ul>
-                <li><b>Acesso ao repositório:</b> Somente repositórios selecionados &gt; o repositório do site</li>
-                <li><b>Permissões de repositório &gt; Contents</b> (Conteúdo): <b>Leitura e gravação</b></li>
-                <li><b>Metadata:</b> Somente leitura (entra sozinho)</li>
-                <li><b>Permissões de usuário:</b> nenhuma</li>
-              </ul>
-              No resumo do token, "código" deve aparecer em <b>Acesso de leitura e gravação</b>.
+  <details id="conexao" class="card">
+    <summary>
+      <h2>Conexão com o GitHub</h2>
+      <span id="conexaoResumo" class="resumo">Não configurada</span>
+      <svg class="seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+    <div class="card-corpo">
+      <div class="grade">
+        <div><label for="ghOwner">Usuário / organização</label><input id="ghOwner" autocomplete="off"></div>
+        <div><label for="ghRepo">Repositório</label><input id="ghRepo" autocomplete="off"></div>
+        <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main" autocomplete="off"></div>
+        <div><label for="ghPath">Caminho do arquivo</label><input id="ghPath" value="medalhas.js" autocomplete="off"></div>
+        <div class="largo">
+          <label for="ghToken" class="com-info">Token do GitHub
+            <span class="info">
+              <button type="button" class="info-btn" aria-label="Permissões necessárias do token" aria-describedby="dicaToken">i</button>
+              <span id="dicaToken" role="tooltip" class="dica">
+                <b>Permissões necessárias</b> (Fine-grained token):
+                <ul>
+                  <li><b>Acesso ao repositório:</b> Somente repositórios selecionados &gt; o repositório do site</li>
+                  <li><b>Permissões de repositório &gt; Contents</b> (Conteúdo): <b>Leitura e gravação</b></li>
+                  <li><b>Metadata:</b> Somente leitura (entra sozinho)</li>
+                  <li><b>Permissões de usuário:</b> nenhuma</li>
+                </ul>
+                No resumo do token, "código" deve aparecer em <b>Acesso de leitura e gravação</b>.
+              </span>
             </span>
-          </span>
-        </label><input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_..."></div>
+          </label>
+          <input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_...">
+        </div>
+      </div>
+      <p class="ajuda" style="margin:12px 0 0">O token fica salvo apenas neste navegador. Em computador compartilhado, use "Esquecer token" ao terminar.</p>
+      <div class="barra-acoes">
+        <button id="carregar" type="button">Carregar dados do GitHub</button>
+        <button id="esquecer" type="button" class="perigo">Esquecer token</button>
+      </div>
     </div>
-    <p><small>Use um <b>fine-grained token</b> com acesso só a este repositório e permissão <b>Contents: Read and write</b>. Ele fica salvo apenas neste navegador. Não use em computador compartilhado.</small></p>
-    <div class="acoes">
-      <button id="carregar">Carregar dados do GitHub</button>
-      <button id="esquecer" class="perigo">Esquecer token</button>
-    </div>
-  </section>
+  </details>
 
-  <section>
-    <h2>Equipes</h2>
-    <p><small>Ao renomear uma equipe, as modalidades que usam o nome antigo são atualizadas juntas. O ID também é aceito nas modalidades.</small></p>
-    <table>
-      <thead><tr><th>ID</th><th>Nome</th><th></th></tr></thead>
-      <tbody id="equipes"></tbody>
-    </table>
-    <div class="acoes">
-      <button id="addEquipe">+ Adicionar equipe</button>
-    </div>
-  </section>
-
-  <section>
-    <h2>Modalidades</h2>
-    <datalist id="listaTimes"></datalist>
-    <table>
-      <thead><tr><th>Modalidade</th><th>Ouro</th><th>Prata</th><th>Bronze</th><th></th></tr></thead>
-      <tbody id="corpo"></tbody>
-    </table>
-    <div class="acoes">
-      <button id="adicionar">+ Adicionar modalidade</button>
-      <button id="salvar" class="principal">Salvar no GitHub</button>
-      <button id="baixar">Baixar medalhas.js</button>
+  <section class="card" aria-labelledby="tTrans">
+    <div class="card-cab"><h2 id="tTrans">Transmissões</h2><span class="contador">ID das salas no VDO.Ninja</span></div>
+    <div class="card-corpo">
+      <div class="prefixo-linha">
+        <div class="prefixo-campo">
+          <label for="salaPrefixo">ID único (3 caracteres)</label>
+          <div class="prefixo-entrada"><input id="salaPrefixo" maxlength="3" autocomplete="off" spellcheck="false" pattern="[a-z0-9]{3}" aria-describedby="prefixoAjuda"><span aria-hidden="true">_</span></div>
+        </div>
+        <button id="prefixoEndereco" type="button" class="fantasma">Usar o calculado pelo endereço</button>
+      </div>
+      <p class="ajuda" id="prefixoAjuda" style="margin:12px 0 6px">Vai na frente de todas as salas para elas não coincidirem com as de outro site. Trocar o ID muda todos os links: reenvie-os para quem transmite.</p>
+      <code id="prefixoExemplo" class="prefixo-exemplo"></code>
     </div>
   </section>
 
-  <section>
-    <h2>Prévia do ranking</h2>
-    <table class="ranking">
-      <thead><tr><th>Equipe</th><th>Ouro</th><th>Prata</th><th>Bronze</th><th>Total</th></tr></thead>
-      <tbody id="previa"></tbody>
-    </table>
+  <section class="card" aria-labelledby="tEquipes">
+    <div class="card-cab">
+      <h2 id="tEquipes">Equipes</h2>
+      <span id="contaEquipes" class="contador"></span>
+      <button id="addEquipe" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Adicionar equipe</button>
+    </div>
+    <div class="card-corpo">
+      <p class="ajuda">Ao renomear, as medalhas lançadas com o nome antigo passam para o novo. O ID também é aceito nas modalidades.</p>
+      <div id="equipes" class="equipes"></div>
+    </div>
   </section>
 
-  <div id="status" role="status" aria-live="polite"></div>
+
+  <section class="card" aria-labelledby="tMods">
+    <div class="card-cab">
+      <h2 id="tMods">Modalidades</h2>
+      <span id="contaMods" class="contador"></span>
+      <label class="busca" for="filtro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="so-leitor">Filtrar modalidades</span><input id="filtro" type="search" placeholder="Filtrar modalidades"></label>
+      <button id="adicionar" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Adicionar modalidade</button>
+    </div>
+    <div class="card-corpo">
+      <datalist id="listaTimes"></datalist>
+      <table class="tabela-mod">
+        <colgroup><col class="c-nome"><col><col><col><col class="c-acao"></colgroup>
+        <thead><tr>
+          <th>Modalidade</th>
+          <th><img src="img/medalhas/ouro.webp" alt="">Ouro</th>
+          <th><img src="img/medalhas/prata.webp" alt="">Prata</th>
+          <th><img src="img/medalhas/bronze.webp" alt="">Bronze</th>
+          <th><span class="so-leitor">Ações</span></th>
+        </tr></thead>
+        <tbody id="corpo"></tbody>
+      </table>
+      <p id="semResultado" class="vazio" hidden>Nenhuma modalidade com esse nome.</p>
+    </div>
+  </section>
 </main>
+
+<aside>
+  <section class="card" aria-labelledby="tPrevia">
+    <div class="card-cab"><h2 id="tPrevia">Prévia do ranking</h2><span class="contador">atualiza enquanto você edita</span></div>
+    <div class="card-corpo">
+      <table class="ranking num">
+        <thead><tr>
+          <th>#</th><th>Equipe</th>
+          <th title="Ouro"><img src="img/medalhas/ouro.webp" alt="Ouro"></th>
+          <th title="Prata"><img src="img/medalhas/prata.webp" alt="Prata"></th>
+          <th title="Bronze"><img src="img/medalhas/bronze.webp" alt="Bronze"></th>
+          <th>Total</th>
+        </tr></thead>
+        <tbody id="previa"></tbody>
+      </table>
+    </div>
+  </section>
+</aside>
+</div>
+
+<div id="status" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
@@ -133,14 +321,52 @@
   const campos = ["ghOwner", "ghRepo", "ghBranch", "ghPath", "ghToken"];
   let dados = null;
   let salvoEm = "";
-  const estado = () => JSON.stringify([coletarTimes(), coletar()]);
+  // Igual a prefixoPadrao() do transmissoes.js: o mesmo endereço gera o mesmo ID nos dois.
+  function prefixoPadrao(loc = location) {
+    const repo = loc.pathname.split("/").filter(Boolean).find(s => !/\.html?$/i.test(s)) || "";
+    let h = 0x811c9dc5;
+    for (const c of (loc.host + "/" + decodeURIComponent(repo)).toLowerCase()) { h ^= c.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+    return (h % 46656).toString(36).padStart(3, "0");
+  }
+  const limparPrefixo = p => String(p || "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 3);
+  function coletarPrefixo() {
+    const p = $("salaPrefixo").value;
+    if (!/^[a-z0-9]{3}$/.test(p)) throw new Error("O ID das transmissões precisa ter exatamente 3 letras ou números.");
+    return p;
+  }
+  function mostrarExemplo() {
+    const p = limparPrefixo($("salaPrefixo").value) || "???";
+    const ex = $("prefixoExemplo"), b = document.createElement("b");
+    b.textContent = p + "_";
+    ex.replaceChildren("https://vdo.ninja/?room=", b, "atletismo100mfeminino");
+  }
+  // Grava/atualiza config.salaPrefixo sem mexer no resto do bloco config.
+  function definirPrefixo(texto, p) {
+    const re = /(salaPrefixo\s*:\s*)(["'])[^"'\n]*\2/;
+    if (re.test(texto)) return texto.replace(re, (_, a) => a + JSON.stringify(p));
+    const m = /config\s*:\s*\{[^\n]*\n/.exec(texto);
+    if (!m) throw new Error("Não achei o bloco \"config\" no medalhas.js.");
+    const fim = m.index + m[0].length;
+    return texto.slice(0, fim) + "    salaPrefixo: " + JSON.stringify(p) + ",             // ID das salas de transmissão (editado no admin)\n" + texto.slice(fim);
+  }
+  const estado = () => JSON.stringify([coletarTimes(), coletar(), $("salaPrefixo").value]);
 
   const store = {
     get: k => { try { return localStorage.getItem("admin." + k); } catch { return null; } },
     set: (k, v) => { try { v ? localStorage.setItem("admin." + k, v) : localStorage.removeItem("admin." + k); } catch {} }
   };
 
-  function status(msg, tipo = "info") { const s = $("status"); s.textContent = msg; s.className = tipo; }
+  let statusTimer;
+  function status(msg, tipo = "info") {
+    const s = $("status"), t = document.createElement("span"), x = document.createElement("button");
+    t.className = "texto"; t.textContent = msg;
+    x.type = "button"; x.className = "fechar"; x.textContent = "×"; x.setAttribute("aria-label", "Fechar aviso"); x.onclick = () => { s.className = ""; };
+    s.replaceChildren(t, x); s.className = tipo;
+    clearTimeout(statusTimer);
+    // Avisos de progresso ("...") e erros ficam até serem trocados ou fechados.
+    if (tipo === "ok" || (tipo === "info" && !msg.endsWith("..."))) statusTimer = setTimeout(() => { s.className = ""; }, 5000);
+  }
+  const ICONE_LIXO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
   const chave = v => String(v || "").trim().normalize("NFD").replace(/[̀-ͯ]/g, "").toLocaleLowerCase("pt-BR");
 
   // No GitHub Pages: <usuario>.github.io/<repo>/admin.html
@@ -158,7 +384,7 @@
     $("ghBranch").value = store.get("ghBranch") || "main";
     $("ghPath").value = store.get("ghPath") || ARQUIVO;
     $("ghToken").value = store.get("ghToken") || "";
-    campos.forEach(c => $(c).addEventListener("change", () => store.set(c, $(c).value.trim())));
+    campos.forEach(c => $(c).addEventListener("change", () => { store.set(c, $(c).value.trim()); atualizarConexao(); }));
   }
   const gh = () => ({ owner: $("ghOwner").value.trim(), repo: $("ghRepo").value.trim(), branch: $("ghBranch").value.trim() || "main", path: $("ghPath").value.trim().replace(/^\/+/, "") || ARQUIVO, token: $("ghToken").value.trim() });
   const ajustar = (campo, valor) => { $(campo).value = valor; store.set(campo, valor); };
@@ -239,9 +465,9 @@
     const td = (cls, el) => { const c = document.createElement("td"); if (cls) c.className = cls; c.append(el); tr.append(c); return el; };
     const inp = (valor, ph, lista) => { const i = document.createElement("input"); i.value = valor || ""; i.placeholder = ph; if (lista) i.setAttribute("list", "listaTimes"); i.addEventListener("input", previa); return i; };
     td("nome", inp(nome, "Ex.: Futsal - Feminino")).dataset.campo = "nome";
-    CORES.forEach(cor => { const i = td("", inp(String(res[cor] || "").trim(), cor[0].toUpperCase() + cor.slice(1), true)); i.dataset.campo = cor; i.classList.add("m-" + cor); i.setAttribute("aria-label", cor); });
+    CORES.forEach(cor => { const i = td("", inp(String(res[cor] || "").trim(), "Equipe", true)); i.dataset.campo = cor; i.classList.add("m-" + cor); i.setAttribute("aria-label", cor); });
     const rem = document.createElement("button");
-    rem.textContent = "Remover"; rem.className = "perigo"; rem.type = "button";
+    rem.innerHTML = ICONE_LIXO; rem.className = "remover"; rem.type = "button"; rem.title = "Remover";
     rem.addEventListener("click", () => { if (confirm(`Remover "${tr.querySelector("[data-campo=nome]").value || "modalidade"}"?`)) { tr.remove(); previa(); } });
     td("", rem);
     return tr;
@@ -249,24 +475,25 @@
 
   /* ---------- equipes ---------- */
   function linhaEquipe(t = {}) {
-    const tr = document.createElement("tr");
+    const tr = document.createElement("div");
     tr.className = "eq";
     tr._time = { ...t }; // preserva imagem e qualquer outro campo do cadastro
-    const tdId = document.createElement("td"); tdId.className = "id"; tdId.textContent = t.id || "";
+    const tdId = document.createElement("span"); tdId.className = "id"; tdId.textContent = t.id || "";
     const inp = document.createElement("input");
     inp.value = String(t.nome || "").trim(); inp.placeholder = "Nome da equipe"; inp.setAttribute("aria-label", "Nome da equipe " + (t.id || ""));
     inp.dataset.anterior = inp.value;
     inp.addEventListener("input", previa);
     inp.addEventListener("change", () => { renomear(inp.dataset.anterior, inp.value.trim()); inp.dataset.anterior = inp.value.trim(); atualizarLista(); previa(); });
     const rem = document.createElement("button");
-    rem.textContent = "Remover"; rem.className = "perigo"; rem.type = "button";
+    rem.innerHTML = ICONE_LIXO; rem.className = "remover"; rem.type = "button"; rem.title = "Remover";
     rem.addEventListener("click", () => {
       const nomes = [t.id, inp.value].map(chave).filter(Boolean);
       const usos = [...$("corpo").querySelectorAll("input[list]")].filter(i => nomes.includes(chave(i.value))).length;
       const aviso = usos ? `\n\nEla tem ${usos} medalha(s) lançada(s); elas continuarão contando com o nome digitado, sem escudo.` : "";
       if (confirm(`Remover a equipe "${inp.value || t.id}"?${aviso}`)) { tr.remove(); atualizarLista(); previa(); }
     });
-    [tdId, inp, rem].forEach(el => { const c = el.tagName === "TD" ? el : document.createElement("td"); if (c !== el) c.append(el); tr.append(c); });
+    rem.title = "Remover equipe";
+    tr.append(tdId, inp, rem);
     return tr;
   }
 
@@ -278,13 +505,13 @@
 
   function proximoId() {
     let n = 0;
-    $("equipes").querySelectorAll("tr.eq").forEach(tr => { const m = /^TIME (\d+)$/i.exec(tr._time.id || ""); if (m) n = Math.max(n, +m[1]); });
+    $("equipes").querySelectorAll(".eq").forEach(tr => { const m = /^TIME (\d+)$/i.exec(tr._time.id || ""); if (m) n = Math.max(n, +m[1]); });
     return "TIME " + (n + 1);
   }
 
   function coletarTimes() {
     const lista = [], vistos = new Set();
-    for (const tr of $("equipes").querySelectorAll("tr.eq")) {
+    for (const tr of $("equipes").querySelectorAll(".eq")) {
       const nome = tr.querySelector("input").value.trim();
       if (!nome) throw new Error(`A equipe ${tr._time.id || ""} está sem nome.`);
       const t = { ...tr._time, nome };
@@ -298,16 +525,43 @@
   }
 
   function atualizarLista() {
-    const nomes = [...$("equipes").querySelectorAll("tr.eq input")].map(i => i.value.trim()).filter(Boolean);
+    const nomes = [...$("equipes").querySelectorAll(".eq input")].map(i => i.value.trim()).filter(Boolean);
     $("listaTimes").replaceChildren(...nomes.map(n => new Option(n, n)));
   }
 
   function desenhar() {
+    // Sem ID salvo, mostra o calculado pelo endereço (é o que o site já usa).
+    const salvo = limparPrefixo(dados.config?.salaPrefixo);
+    $("salaPrefixo").value = salvo.length === 3 ? salvo : prefixoPadrao();
+    mostrarExemplo();
     $("equipes").replaceChildren(...(dados.times || []).map(linhaEquipe));
     atualizarLista();
     $("corpo").replaceChildren(...Object.entries(dados.modalidades || {}).map(([n, r]) => linha(n, r)));
     previa();
     salvoEm = estado();
+    $("tituloEvento").textContent = dados.config?.titulo || "Quadro de Medalhas";
+    atualizarSujo();
+    filtrar();
+  }
+
+  function atualizarSujo() {
+    let sujo;
+    try { sujo = !!dados && estado() !== salvoEm; } catch { sujo = true; }
+    const el = $("sujo"), txt = sujo ? "Alterações não salvas" : "Tudo salvo";
+    el.dataset.estado = sujo ? "sujo" : "salvo"; el.title = txt; el.querySelector(".rotulo").textContent = txt;
+  }
+
+  function filtrar() {
+    const q = chave($("filtro").value);
+    let visiveis = 0;
+    $("corpo").querySelectorAll("tr.mod").forEach(tr => { const ok = !q || chave(tr.querySelector("[data-campo=nome]").value).includes(q); tr.hidden = !ok; if (ok) visiveis++; });
+    $("semResultado").hidden = visiveis > 0 || !q;
+  }
+
+  function atualizarConexao() {
+    const { owner, repo, token } = gh(), alvo = owner && repo ? `${owner}/${repo}` : "";
+    $("conexaoResumo").textContent = alvo ? (token ? alvo : alvo + " · sem token") : "Não configurada";
+    $("conexaoResumo").dataset.ok = alvo && token ? "1" : "";
   }
 
   function coletar() {
@@ -340,11 +594,24 @@
       placar.get(id)[cor]++;
     }
     const ord = [...placar.values()].sort((a, b) => b.ouro - a.ouro || b.prata - a.prata || b.bronze - a.bronze || a.nome.localeCompare(b.nome));
-    $("previa").replaceChildren(...ord.map(p => {
-      const tr = document.createElement("tr");
-      [p.nome + (p.novo ? " (não cadastrada)" : ""), p.ouro, p.prata, p.bronze, p.ouro + p.prata + p.bronze].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.append(td); });
+    // Mesmo critério olímpico do site: empatados dividem a posição (1º, 2º, 2º, 4º).
+    let pos = 0, anterior = null;
+    $("previa").replaceChildren(...ord.map((p, n) => {
+      const tr = document.createElement("tr"), total = p.ouro + p.prata + p.bronze, k = [p.ouro, p.prata, p.bronze].join("/");
+      if (k !== anterior) pos = n + 1;
+      anterior = k;
+      if (pos <= 3 && total) tr.className = "podio-" + pos;
+      const cel = (v, cls = "") => { const td = document.createElement("td"); td.className = (cls + (v === 0 ? " zero" : "")).trim(); td.textContent = v; tr.append(td); return td; };
+      cel(pos, "pos");
+      const eq = cel(p.nome, "equipe");
+      if (p.novo) { const s = document.createElement("span"); s.className = "selo"; s.textContent = "não cadastrada"; s.title = "Este nome não está na lista de equipes"; eq.append(s); }
+      cel(p.ouro); cel(p.prata); cel(p.bronze); cel(total, "total");
       return tr;
     }));
+    const comResultado = Object.values(mods).filter(r => r.ouro || r.prata || r.bronze).length;
+    $("contaMods").textContent = `${Object.keys(mods).length} no total · ${comResultado} com resultado`;
+    $("contaEquipes").textContent = `${times.length} cadastrada${times.length === 1 ? "" : "s"}`;
+    atualizarSujo();
   }
 
   /* ---------- gravar ---------- */
@@ -377,7 +644,8 @@
   }
 
   // Troca só os blocos "times" e "modalidades" e preserva config e comentários de fora deles.
-  function montarArquivo(textoAtual, mods, times) {
+  function montarArquivo(textoAtual, mods, times, prefixo) {
+    if (prefixo !== undefined) textoAtual = definirPrefixo(textoAtual, prefixo);
     if (times) {
       const m = /times\s*:\s*\[/.exec(textoAtual);
       if (!m) throw new Error("Não achei o bloco \"times\" no medalhas.js.");
@@ -394,7 +662,7 @@
 
   async function ocupado(btn, fn) {
     document.querySelectorAll("button").forEach(b => b.disabled = true);
-    try { await fn(); } catch (e) { status("Erro: " + e.message, "erro"); }
+    try { await fn(); } catch (e) { status("Erro: " + e.message, "erro"); if (/GitHub|token|repositório|branch|usuário/i.test(e.message)) $("conexao").open = true; }
     finally { document.querySelectorAll("button").forEach(b => b.disabled = false); }
   }
 
@@ -410,11 +678,12 @@
     const mods = coletar();
     status("Salvando...");
     const { texto, sha } = await lerDoGitHub(); // versão mais nova, para não sobrescrever outra edição
-    const novo = montarArquivo(texto, mods, coletarTimes());
+    const novo = montarArquivo(texto, mods, coletarTimes(), coletarPrefixo());
     if (novo === texto) { status("Nada mudou.", "ok"); return; }
     await api("PUT", { message: "Atualiza medalhas pelo painel admin", content: b64encode(novo), sha, branch: gh().branch });
     dados = interpretar(novo);
     salvoEm = estado();
+    atualizarSujo();
     status("Salvo! O GitHub Pages publica em cerca de 1 minuto e o placar se atualiza sozinho.", "ok");
   }));
 
@@ -422,13 +691,16 @@
     const mods = coletar();
     let base;
     try { base = (await lerDoGitHub()).texto; } catch { base = await (await fetch(`${ARQUIVO}?v=${Date.now()}`, { cache: "no-store" })).text(); }
-    const blob = new Blob([montarArquivo(base, mods, coletarTimes())], { type: "text/javascript" });
+    const blob = new Blob([montarArquivo(base, mods, coletarTimes(), coletarPrefixo())], { type: "text/javascript" });
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: ARQUIVO });
     a.click(); URL.revokeObjectURL(a.href);
     status("Arquivo baixado. Envie-o para o repositório substituindo o medalhas.js.", "ok");
   }));
 
-  $("adicionar").addEventListener("click", () => { const tr = linha(); $("corpo").append(tr); tr.querySelector("input").focus(); });
+  $("filtro").addEventListener("input", filtrar);
+  $("salaPrefixo").addEventListener("input", () => { const i = $("salaPrefixo"), v = limparPrefixo(i.value); if (i.value !== v) i.value = v; mostrarExemplo(); atualizarSujo(); });
+  $("prefixoEndereco").addEventListener("click", () => { $("salaPrefixo").value = prefixoPadrao(); mostrarExemplo(); atualizarSujo(); });
+  $("adicionar").addEventListener("click", () => { $("filtro").value = ""; filtrar(); const tr = linha(); $("corpo").append(tr); tr.querySelector("input").focus(); });
   $("addEquipe").addEventListener("click", () => { const tr = linhaEquipe({ id: proximoId(), nome: "", imagem: "" }); $("equipes").append(tr); tr.querySelector("input").focus(); });
   $("esquecer").addEventListener("click", () => { store.set("ghToken", ""); $("ghToken").value = ""; status("Token apagado deste navegador.", "ok"); });
 
@@ -453,6 +725,8 @@
   ["scroll", "resize"].forEach(ev => addEventListener(ev, () => infos.forEach(posicionarDica), { passive: true }));
 
   iniciarCampos();
+  atualizarConexao();
+  $("conexao").open = !gh().token;
   (async () => {
     try {
       if (gh().token) { const { texto } = await lerDoGitHub(); dados = interpretar(texto); }

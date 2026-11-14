@@ -1951,3 +1951,61 @@ body.sem-bronze .linha .nums {grid-template-columns:repeat(3,64px)}
 .podio-vazio{font-weight:700;color:#bcaec9;padding:28px 0}
 .podio-item .podio-medalha{margin-top:auto;padding-top:10px}
 @media(max-width:520px){.podio{display:grid;grid-template-columns:1fr 1.14fr 1fr;gap:5px}.podio-item{min-width:0;padding:12px 5px}.podio-equipes{gap:9px}.podio-equipe+.podio-equipe{padding-top:9px}.podio-equipe .podio-nome{font-size:clamp(.72rem,2.7vw,1.05rem)}.podio-equipe .podio-total{font-size:.5rem}.podio-equipe .podio-escudo{width:38px;height:38px}.podio-1 .podio-equipe .podio-escudo{width:45px;height:45px}}
+
+/* ===== Melhorias v11 ===== */
+/* Ícones SVG das abas (substituem os símbolos de texto ⌂ e ◉) */
+.aba-navegacao{display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.aba-icone{width:17px;height:17px;flex:none}
+
+/* Andamento: "X de Y modalidades com resultado" */
+.progresso{display:flex;align-items:center;gap:22px;margin:14px 0 26px;padding:16px 25px;border:1px solid #ffffff19;background:linear-gradient(130deg,#ffffff10,#ffffff04);border-radius:18px;box-shadow:0 12px 35px #07000c20}
+.progresso[hidden]{display:none}
+.progresso-texto{display:flex;align-items:baseline;gap:14px;flex:none}
+.progresso-texto strong{font:800 1.05rem Inter,system-ui,sans-serif;color:#fff}
+.progresso-barra{flex:1;height:10px;border-radius:99px;background:#ffffff14;overflow:hidden}
+.progresso-barra i{display:block;height:100%;width:calc(var(--feito,0) * 100%);border-radius:inherit;background:linear-gradient(90deg,#ffaa40,#ea7937);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+@media(max-width:520px){.progresso{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px}.progresso-texto{justify-content:space-between}.progresso-texto strong{font-size:.9rem}.progresso-barra{flex:none}}
+
+/* Pódio no celular: um cartão por linha, 1º lugar em cima, escudo ao lado do nome */
+@media(max-width:520px){
+  .podio{grid-template-columns:1fr;gap:10px}
+  .podio-1{order:-1}
+  .podio-item{display:grid;grid-template-columns:1fr auto;grid-template-areas:"coroa medalha" "equipes equipes";align-items:center;gap:4px 10px;padding:14px 16px;min-height:0;height:auto}
+  .podio-item .podio-coroa{grid-area:coroa;text-align:left;margin:0;font-size:.72rem}
+  .podio-item .podio-medalha{grid-area:medalha;margin:0;padding:0;font-size:0}
+  .podio-item .podio-medalha-img{width:30px;height:30px}
+  .podio-item .podio-equipes{grid-area:equipes;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;gap:12px 22px;margin:6px 0 0}
+  .podio-item .podio-equipe{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;justify-items:start}
+  .podio-item .podio-equipe+.podio-equipe{border-top:0;padding-top:0}
+  .podio-item .podio-equipe .podio-escudo{grid-row:1 / 3;width:46px;height:46px;margin:0}
+  .podio-1.podio-item .podio-equipe .podio-escudo{width:54px;height:54px}
+  .podio-item .podio-equipe .podio-nome{font-size:1.45rem;text-align:left;line-height:1}
+  .podio-item .podio-equipe .podio-total{font-size:.72rem;margin-top:3px}
+  .podio-item .podio-vazio{padding:6px 0;text-align:left}
+}
+
+/* Pódio sem equipe (empate acima ou ainda a definir): medalha apagada */
+.podio-sem-equipe .podio-medalha{opacity:.4;filter:grayscale(.6)}
+
+/* QR code minimizado ao lado de cada link de transmissão; clique amplia */
+.qr-mini{flex:none;width:46px;height:46px;padding:4px;border-radius:9px;border:1px solid #ffffff35;background:#fff;cursor:pointer;display:grid;place-items:center;transition:transform .15s,box-shadow .15s}
+.qr-mini[hidden]{display:none}
+.qr-mini:hover{transform:scale(1.06);box-shadow:0 6px 18px #0006}
+.qr-mini:focus-visible{outline:2px solid #ffb453;outline-offset:2px}
+.qr-mini svg,.qr-grande svg{display:block;width:100%;height:100%}
+.qr-dialogo{margin:auto;inset:0;max-height:calc(100vh - 32px);overflow:auto;border:1px solid #ffffff30;border-radius:18px;padding:22px;background:#1a0f29;color:#f4eefc;width:min(360px,calc(100vw - 32px));text-align:center;box-shadow:0 30px 70px #000a}
+.qr-dialogo::backdrop{background:#07020dcc;backdrop-filter:blur(3px)}
+.qr-dialogo h3{margin:0 0 14px;font:800 1.4rem 'Barlow Condensed',sans-serif;letter-spacing:.02em}
+.qr-grande{width:100%;aspect-ratio:1;background:#fff;border-radius:12px;padding:14px;box-sizing:border-box}
+.qr-link{margin:12px 0 16px;font:.78rem ui-monospace,Consolas,monospace;color:#cbbdd8;overflow-wrap:anywhere}
+
+/* Hover no QR: código esmaece, ícone de expandir no centro e dica embaixo */
+.qr-mini{position:relative;overflow:visible}
+.qr-mini svg{transition:opacity .15s}
+.qr-mini:hover,.qr-mini:focus-visible{transform:none}
+.qr-mini::after{content:"";position:absolute;left:50%;top:50%;width:30px;height:30px;translate:-50% -50%;border-radius:50%;background:#2b2b2b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5M4 4l5 5M20 4l-5 5M4 20l5-5M20 20l-5-5'/%3E%3C/svg%3E") center/16px no-repeat;opacity:0;scale:.8;transition:opacity .15s,scale .15s;pointer-events:none}
+.qr-mini::before{content:attr(data-dica);position:absolute;left:50%;top:calc(100% + 8px);translate:-50% 0;padding:6px 10px;border-radius:7px;background:#2b2b2b;color:#fff;font:600 .75rem Inter,system-ui,sans-serif;white-space:nowrap;box-shadow:0 6px 16px #0006;opacity:0;transition:opacity .15s;pointer-events:none;z-index:5}
+.qr-mini:hover svg,.qr-mini:focus-visible svg{opacity:.35}
+.qr-mini:hover::after,.qr-mini:focus-visible::after{opacity:1;scale:1}
+.qr-mini:hover::before,.qr-mini:focus-visible::before{opacity:1}
+@media(hover:none){.qr-mini::before{display:none}}

@@ -134,3 +134,33 @@ EQUIPES NO ADMIN
 - Seção "Equipes": edite o nome ou use "+ Adicionar equipe" (o ID TIME N é
   gerado sozinho). Ao renomear, as medalhas já lançadas com o nome antigo
   passam para o nome novo. "Salvar no GitHub" grava equipes e modalidades.
+
+V11 — MELHORIAS NO SITE
+- Posições no critério olímpico: empatados dividem a posição e a seguinte
+  pula (1º, 2º, 2º, 4º). Se não existir 3º lugar por empate, o pódio mostra
+  "Sem 3º lugar (empate acima)".
+- Siglas únicas nos escudos sem imagem (ex.: NOROESTE = NO, NORTE = NT).
+- Barra "X de Y com resultado": conta modalidades que já têm ouro.
+- A abertura aparece uma vez por sessão do navegador. Para ver de novo,
+  abra o site com ?intro=1 no fim do endereço (ou ?intro=0 para nunca ver).
+- No celular o pódio fica um cartão por linha, com o 1º lugar em cima.
+
+ESCUDOS DAS EQUIPES
+1. Coloque as imagens em img/times/ (PNG ou WEBP quadrado, ~200x200px),
+   ex.: img/times/catedral.png
+2. Em medalhas.js, preencha o campo imagem da equipe:
+   { id:"TIME 1", nome:"CATEDRAL", imagem:"img/times/catedral.png" },
+3. Suba as imagens e o medalhas.js para o GitHub. Se a imagem não carregar,
+   o site volta a mostrar a sigla. O admin preserva o campo imagem ao salvar.
+
+ID DAS SALAS DE TRANSMISSÃO (prefixo xxx_)
+- Toda sala do VDO.Ninja começa com um ID de 3 caracteres:
+  https://vdo.ninja/?room=xxx_atletismo100mfeminino
+  Assim as salas não coincidem com as de outro site que use os mesmos nomes.
+- Por padrão o ID é calculado a partir do endereço do site (usuário +
+  repositório do GitHub Pages), então muda se o site mudar de endereço.
+- No admin, cartão "Transmissões": veja, troque (3 letras/números) ou volte
+  ao calculado. Ao salvar, ele fica fixo em medalhas.js (config.salaPrefixo).
+- Trocar o ID muda TODOS os links: reenvie convidado/OBS/diretor para quem
+  transmite. Quem estiver com a aba Transmissões aberta recebe a troca
+  sozinho na próxima atualização automática.

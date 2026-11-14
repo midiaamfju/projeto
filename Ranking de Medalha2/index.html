@@ -53,8 +53,8 @@
     </header>
 
     <nav class="navegacao-site" aria-label="Menu principal">
-      <button type="button" class="aba-navegacao ativa" id="abaHome" aria-selected="true">⌂ Home / Ranking</button>
-      <button type="button" class="aba-navegacao" id="abaTransmissao" aria-selected="false">◉ Transmissões</button>
+      <button type="button" class="aba-navegacao ativa" id="abaHome" aria-selected="true"><svg class="aba-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v1a4 4 0 0 1-4 4M7 5H4v1a4 4 0 0 0 4 4"/></svg>Home / Ranking</button>
+      <button type="button" class="aba-navegacao" id="abaTransmissao" aria-selected="false"><svg class="aba-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10.5 6-3.5v10l-6-3.5"/></svg>Transmissões</button>
     </nav>
 
     <div id="secaoHome">
@@ -64,13 +64,18 @@
       <div class="stat stat-lider"><span class="stat-label">LIDERANÇA ATUAL</span><strong id="statLider">—</strong><span class="stat-foot">1º lugar geral</span></div>
     </section>
 
+    <div id="progresso" class="progresso" hidden>
+      <div class="progresso-texto"><span class="stat-label">MODALIDADES</span><strong id="progressoTexto"></strong></div>
+      <div id="progressoBarra" class="progresso-barra" role="progressbar" aria-label="Modalidades com resultado" aria-valuemin="0"><i></i></div>
+    </div>
+
     <section class="podio-section" aria-label="Destaques dos três primeiros colocados">
-      <div class="section-kicker"><span>DESTAQUES DA COMPETIÇÃO</span><i></i><label class="modalidade-select-wrap" for="modalidadeSelect"><span>MODALIDADE</span><select id="modalidadeSelect" aria-label="Selecionar modalidade"><option value="todos">Todas as modalidades</option></select></label></div>
+      <div class="section-kicker"><span role="heading" aria-level="2">DESTAQUES DA COMPETIÇÃO</span><i></i><label class="modalidade-select-wrap" for="modalidadeSelect"><span>MODALIDADE</span><select id="modalidadeSelect" aria-label="Selecionar modalidade"><option value="todos">Todas as modalidades</option></select></label></div>
       <div id="podio" class="podio"></div>
     </section>
 
     <div class="faixa">
-      <span id="tituloQuadro"></span>
+      <span id="tituloQuadro" role="heading" aria-level="2"></span>
       <div class="cols">
         <img class="medalha-imagem" src="img/medalhas/ouro.webp" alt="Ouro" title="Ouro">
         <img class="medalha-imagem" src="img/medalhas/prata.webp" alt="Prata" title="Prata">
@@ -105,9 +110,9 @@
       </div>
       <p class="sala-legenda">Visualização em grade da mesma sala do Manager. Pode aparecer vazia enquanto ninguém estiver transmitindo. O vídeo requer conexão com a internet. Se a grade estiver vazia, use “Abrir câmeras fora do site” para testar a cena diretamente no VDO.Ninja.</p>
       <div class="sala-acoes">
-        <div class="sala-link"><label for="linkConvidado">CONVIDAR PARTICIPANTE — ENVIAR CÂMERA</label><div><input id="linkConvidado" readonly><button id="copiarConvidado" class="trans-botao" type="button">Copiar convite</button></div></div>
-        <div class="sala-link"><label for="linkObs">CENA EM GRADE PARA OBS</label><div><input id="linkObs" readonly><button id="copiarObs" class="trans-botao" type="button">Copiar para OBS</button></div></div>
-        <div class="sala-link"><label for="linkDiretor">MANAGER — CONTROLE DA SALA</label><div><input id="linkDiretor" readonly><button id="copiarDiretor" class="trans-botao" type="button">Copiar Manager</button></div></div>
+        <div class="sala-link"><label for="linkConvidado">CONVIDAR PARTICIPANTE — ENVIAR CÂMERA</label><div><input id="linkConvidado" readonly><button class="qr-mini" type="button" data-qr="linkConvidado" data-titulo="Convidar participante" aria-label="Ver QR code: Convidar participante" data-dica="Expandir código QR" hidden></button><button id="copiarConvidado" class="trans-botao" type="button">Copiar convite</button></div></div>
+        <div class="sala-link"><label for="linkObs">CENA EM GRADE PARA OBS</label><div><input id="linkObs" readonly><button class="qr-mini" type="button" data-qr="linkObs" data-titulo="Cena em grade para OBS" aria-label="Ver QR code: Cena em grade para OBS" data-dica="Expandir código QR" hidden></button><button id="copiarObs" class="trans-botao" type="button">Copiar para OBS</button></div></div>
+        <div class="sala-link"><label for="linkDiretor">MANAGER — CONTROLE DA SALA</label><div><input id="linkDiretor" readonly><button class="qr-mini" type="button" data-qr="linkDiretor" data-titulo="Manager, controle da sala" aria-label="Ver QR code: Manager, controle da sala" data-dica="Expandir código QR" hidden></button><button id="copiarDiretor" class="trans-botao" type="button">Copiar Manager</button></div></div>
       </div>
       <div class="sala-links-externos"><a id="abrirConvite" target="_blank" rel="noopener noreferrer">Entrar com câmera ↗</a><a id="abrirDiretor" target="_blank" rel="noopener noreferrer">Abrir sala do diretor ↗</a><a id="abrirCena" target="_blank" rel="noopener noreferrer">Abrir câmeras fora do site ↗</a><button id="recarregarSala" type="button" class="trans-botao">Recarregar grade</button></div>
       <div class="trans-instrucoes">
@@ -125,6 +130,13 @@
   </main>
 
   <script src="script.js"></script>
+  <dialog id="qrDialogo" class="qr-dialogo" aria-labelledby="qrTitulo">
+    <h3 id="qrTitulo"></h3>
+    <div id="qrGrande" class="qr-grande"></div>
+    <p id="qrLink" class="qr-link"></p>
+    <button id="qrFechar" type="button" class="trans-botao">Fechar</button>
+  </dialog>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha512-ZDSPMa/JM1D+7kdg2x3BsruQ6T/JpJo3jWDWkCZsP+5yVyp1KfESqLI+7RqB5k24F7p2cV7i2YHh/890y6P6Sw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="transmissoes.js"></script>
 </body>
 </html>

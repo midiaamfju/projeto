@@ -68,8 +68,7 @@ window.MEDALHAS = {
     "Vôlei de Areia - Feminino": { ouro: "SUL", prata: "LESTE" },
     "Vôlei de Areia - Masculino": { ouro: "INTERIOR", prata: "SUL" },
     "Vôlei de Quadra - Feminino": { ouro: "SUL", prata: "CATEDRAL" },
-    "Vôlei de Quadra - Masculino": { ouro: "LESTE", prata: "INTERIOR" },
-    "Xadrez": { ouro: "LESTE", prata: "SUL", bronze: "LESTE" },
-    "joel": { ouro: "", prata: "" }
+    "Vôlei de Quadra - Masculino": { ouro: "LESTE ", prata: "INTERIOR" },
+    "Xadrez": { ouro: "LESTE", prata: "SUL" }
   }
 };
