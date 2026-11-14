@@ -29,12 +29,20 @@
   table { width:100%; border-collapse:collapse; }
   th, td { padding:6px; text-align:left; border-bottom:1px solid var(--linha); vertical-align:middle; }
   th { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); }
-  td.nome input { font-weight:600; }
+  td.nome input, tr.eq input { font-weight:600; }
+  td.id { color:var(--suave); font-size:13px; white-space:nowrap; width:1%; }
   .m-ouro { border-left:4px solid #e7b73a; } .m-prata { border-left:4px solid #c9ccd6; } .m-bronze { border-left:4px solid #c27a45; }
   #status { position:sticky; bottom:12px; padding:12px 14px; border-radius:10px; background:#140a22; border:1px solid var(--linha); display:none; }
   #status.ok { display:block; border-color:var(--ok); } #status.erro { display:block; border-color:var(--erro); } #status.info { display:block; }
   .ranking td:not(:first-child), .ranking th:not(:first-child) { text-align:center; }
   small { color:var(--suave); }
+  .com-info { display:flex; align-items:center; gap:6px; }
+  .info { position:relative; display:inline-flex; }
+  .info-btn { width:20px; height:20px; padding:0; border-radius:50%; font:italic 700 12px/1 Georgia,serif; color:var(--destaque); border-color:var(--destaque); background:transparent; }
+  /* position:fixed + JS (posicionarDica) mantém o balão dentro da janela em qualquer largura. */
+  .dica { display:none; position:fixed; z-index:10; top:0; left:0; width:min(320px, calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; padding:12px; border-radius:10px; background:#140a22; border:1px solid var(--destaque); color:var(--texto); font-size:13px; line-height:1.45; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+  .dica ul { margin:6px 0; padding-left:18px; }
+  .info:hover .dica, .info:focus-within .dica { display:block; }
   @media (max-width:700px) {
     thead { display:none; }
     tr.mod { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; padding:10px 0; border-bottom:1px solid var(--linha); }
@@ -55,12 +63,39 @@
       <div><label for="ghRepo">Repositório</label><input id="ghRepo" autocomplete="off"></div>
       <div><label for="ghBranch">Branch</label><input id="ghBranch" value="main" autocomplete="off"></div>
       <div><label for="ghPath">Caminho do arquivo</label><input id="ghPath" value="medalhas.js" autocomplete="off"></div>
-      <div><label for="ghToken">Token do GitHub</label><input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_..."></div>
+      <div>
+        <label for="ghToken" class="com-info">Token do GitHub
+          <span class="info">
+            <button type="button" class="info-btn" aria-label="Permissões necessárias do token" aria-describedby="dicaToken">i</button>
+            <span id="dicaToken" role="tooltip" class="dica">
+              <b>Permissões necessárias</b> (Fine-grained token):
+              <ul>
+                <li><b>Acesso ao repositório:</b> Somente repositórios selecionados &gt; o repositório do site</li>
+                <li><b>Permissões de repositório &gt; Contents</b> (Conteúdo): <b>Leitura e gravação</b></li>
+                <li><b>Metadata:</b> Somente leitura (entra sozinho)</li>
+                <li><b>Permissões de usuário:</b> nenhuma</li>
+              </ul>
+              No resumo do token, "código" deve aparecer em <b>Acesso de leitura e gravação</b>.
+            </span>
+          </span>
+        </label><input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_..."></div>
     </div>
     <p><small>Use um <b>fine-grained token</b> com acesso só a este repositório e permissão <b>Contents: Read and write</b>. Ele fica salvo apenas neste navegador. Não use em computador compartilhado.</small></p>
     <div class="acoes">
       <button id="carregar">Carregar dados do GitHub</button>
       <button id="esquecer" class="perigo">Esquecer token</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Equipes</h2>
+    <p><small>Ao renomear uma equipe, as modalidades que usam o nome antigo são atualizadas juntas. O ID também é aceito nas modalidades.</small></p>
+    <table>
+      <thead><tr><th>ID</th><th>Nome</th><th></th></tr></thead>
+      <tbody id="equipes"></tbody>
+    </table>
+    <div class="acoes">
+      <button id="addEquipe">+ Adicionar equipe</button>
     </div>
   </section>
 
@@ -97,6 +132,8 @@
   const CORES = ["ouro", "prata", "bronze"];
   const campos = ["ghOwner", "ghRepo", "ghBranch", "ghPath", "ghToken"];
   let dados = null;
+  let salvoEm = "";
+  const estado = () => JSON.stringify([coletarTimes(), coletar()]);
 
   const store = {
     get: k => { try { return localStorage.getItem("admin." + k); } catch { return null; } },
@@ -210,10 +247,67 @@
     return tr;
   }
 
+  /* ---------- equipes ---------- */
+  function linhaEquipe(t = {}) {
+    const tr = document.createElement("tr");
+    tr.className = "eq";
+    tr._time = { ...t }; // preserva imagem e qualquer outro campo do cadastro
+    const tdId = document.createElement("td"); tdId.className = "id"; tdId.textContent = t.id || "";
+    const inp = document.createElement("input");
+    inp.value = String(t.nome || "").trim(); inp.placeholder = "Nome da equipe"; inp.setAttribute("aria-label", "Nome da equipe " + (t.id || ""));
+    inp.dataset.anterior = inp.value;
+    inp.addEventListener("input", previa);
+    inp.addEventListener("change", () => { renomear(inp.dataset.anterior, inp.value.trim()); inp.dataset.anterior = inp.value.trim(); atualizarLista(); previa(); });
+    const rem = document.createElement("button");
+    rem.textContent = "Remover"; rem.className = "perigo"; rem.type = "button";
+    rem.addEventListener("click", () => {
+      const nomes = [t.id, inp.value].map(chave).filter(Boolean);
+      const usos = [...$("corpo").querySelectorAll("input[list]")].filter(i => nomes.includes(chave(i.value))).length;
+      const aviso = usos ? `\n\nEla tem ${usos} medalha(s) lançada(s); elas continuarão contando com o nome digitado, sem escudo.` : "";
+      if (confirm(`Remover a equipe "${inp.value || t.id}"?${aviso}`)) { tr.remove(); atualizarLista(); previa(); }
+    });
+    [tdId, inp, rem].forEach(el => { const c = el.tagName === "TD" ? el : document.createElement("td"); if (c !== el) c.append(el); tr.append(c); });
+    return tr;
+  }
+
+  // Troca o nome antigo nas medalhas já lançadas para a equipe não perder pontos.
+  function renomear(antigo, novo) {
+    if (!antigo || !novo || chave(antigo) === chave(novo)) return;
+    $("corpo").querySelectorAll("input[list]").forEach(i => { if (chave(i.value) === chave(antigo)) i.value = novo; });
+  }
+
+  function proximoId() {
+    let n = 0;
+    $("equipes").querySelectorAll("tr.eq").forEach(tr => { const m = /^TIME (\d+)$/i.exec(tr._time.id || ""); if (m) n = Math.max(n, +m[1]); });
+    return "TIME " + (n + 1);
+  }
+
+  function coletarTimes() {
+    const lista = [], vistos = new Set();
+    for (const tr of $("equipes").querySelectorAll("tr.eq")) {
+      const nome = tr.querySelector("input").value.trim();
+      if (!nome) throw new Error(`A equipe ${tr._time.id || ""} está sem nome.`);
+      const t = { ...tr._time, nome };
+      for (const k of new Set([chave(t.id), chave(nome)].filter(Boolean))) {
+        if (vistos.has(k)) throw new Error(`O nome/ID "${nome}" está repetido em mais de uma equipe.`);
+        vistos.add(k);
+      }
+      lista.push(t);
+    }
+    return lista;
+  }
+
+  function atualizarLista() {
+    const nomes = [...$("equipes").querySelectorAll("tr.eq input")].map(i => i.value.trim()).filter(Boolean);
+    $("listaTimes").replaceChildren(...nomes.map(n => new Option(n, n)));
+  }
+
   function desenhar() {
-    $("listaTimes").replaceChildren(...(dados.times || []).map(t => new Option(t.nome || t.id, t.nome || t.id)));
+    $("equipes").replaceChildren(...(dados.times || []).map(linhaEquipe));
+    atualizarLista();
     $("corpo").replaceChildren(...Object.entries(dados.modalidades || {}).map(([n, r]) => linha(n, r)));
     previa();
+    salvoEm = estado();
   }
 
   function coletar() {
@@ -231,10 +325,10 @@
 
   // Mesma regra do script.js: cada campo preenchido vale uma medalha; ID e nome contam como a mesma equipe.
   function previa() {
-    let mods;
-    try { mods = coletar(); } catch { return; }
+    let mods, times;
+    try { mods = coletar(); times = coletarTimes(); } catch { return; }
     const alias = new Map(), placar = new Map();
-    for (const t of dados.times || []) {
+    for (const t of times) {
       const id = chave(t.id || t.nome);
       placar.set(id, { nome: t.nome || t.id, ouro: 0, prata: 0, bronze: 0 });
       [t.id, t.nome].forEach(a => a && alias.set(chave(a), id));
@@ -261,8 +355,35 @@
     return `modalidades: {\n${linhas.join(",\n")}\n  }\n`;
   }
 
-  // Troca só o bloco "modalidades" (o último do arquivo) e preserva config, times e comentários.
-  function montarArquivo(textoAtual, mods) {
+  function blocoTimes(times) {
+    const s = JSON.stringify;
+    const campos = t => Object.entries(t).map(([k, v]) => `${/^[A-Za-z_$][\w$]*$/.test(k) ? k : s(k)}:${s(v)}`).join(", ");
+    return `times: [\n${times.map(t => `    { ${campos(t)} }`).join(",\n")}\n  ]`;
+  }
+
+  // Índice do ] ou } que fecha o bloco aberto em i, ignorando strings e comentários.
+  function fechamento(t, i) {
+    let prof = 0, aspas = "";
+    for (; i < t.length; i++) {
+      const c = t[i];
+      if (aspas) { if (c === "\\") i++; else if (c === aspas) aspas = ""; continue; }
+      if (c === '"' || c === "'" || c === "`") aspas = c;
+      else if (c === "/" && t[i + 1] === "/") { const j = t.indexOf("\n", i); i = j < 0 ? t.length : j; }
+      else if (c === "/" && t[i + 1] === "*") { const j = t.indexOf("*/", i + 2); i = j < 0 ? t.length : j + 1; }
+      else if (c === "[" || c === "{") prof++;
+      else if ((c === "]" || c === "}") && --prof === 0) return i;
+    }
+    throw new Error("Bloco sem fechamento no medalhas.js.");
+  }
+
+  // Troca só os blocos "times" e "modalidades" e preserva config e comentários de fora deles.
+  function montarArquivo(textoAtual, mods, times) {
+    if (times) {
+      const m = /times\s*:\s*\[/.exec(textoAtual);
+      if (!m) throw new Error("Não achei o bloco \"times\" no medalhas.js.");
+      const fimT = fechamento(textoAtual, m.index + m[0].length - 1);
+      textoAtual = textoAtual.slice(0, m.index) + blocoTimes(times) + textoAtual.slice(fimT + 1);
+    }
     const ini = textoAtual.search(/modalidades\s*:\s*\{/);
     const fim = textoAtual.lastIndexOf("};");
     if (ini < 0 || fim < ini) throw new Error("Não achei o bloco \"modalidades\" no medalhas.js.");
@@ -289,10 +410,11 @@
     const mods = coletar();
     status("Salvando...");
     const { texto, sha } = await lerDoGitHub(); // versão mais nova, para não sobrescrever outra edição
-    const novo = montarArquivo(texto, mods);
+    const novo = montarArquivo(texto, mods, coletarTimes());
     if (novo === texto) { status("Nada mudou.", "ok"); return; }
     await api("PUT", { message: "Atualiza medalhas pelo painel admin", content: b64encode(novo), sha, branch: gh().branch });
     dados = interpretar(novo);
+    salvoEm = estado();
     status("Salvo! O GitHub Pages publica em cerca de 1 minuto e o placar se atualiza sozinho.", "ok");
   }));
 
@@ -300,24 +422,35 @@
     const mods = coletar();
     let base;
     try { base = (await lerDoGitHub()).texto; } catch { base = await (await fetch(`${ARQUIVO}?v=${Date.now()}`, { cache: "no-store" })).text(); }
-    const blob = new Blob([montarArquivo(base, mods)], { type: "text/javascript" });
+    const blob = new Blob([montarArquivo(base, mods, coletarTimes())], { type: "text/javascript" });
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: ARQUIVO });
     a.click(); URL.revokeObjectURL(a.href);
     status("Arquivo baixado. Envie-o para o repositório substituindo o medalhas.js.", "ok");
   }));
 
   $("adicionar").addEventListener("click", () => { const tr = linha(); $("corpo").append(tr); tr.querySelector("input").focus(); });
+  $("addEquipe").addEventListener("click", () => { const tr = linhaEquipe({ id: proximoId(), nome: "", imagem: "" }); $("equipes").append(tr); tr.querySelector("input").focus(); });
   $("esquecer").addEventListener("click", () => { store.set("ghToken", ""); $("ghToken").value = ""; status("Token apagado deste navegador.", "ok"); });
 
   window.addEventListener("beforeunload", e => {
     if (!dados) return;
-    try { if (JSON.stringify(coletar()) !== JSON.stringify(normalizar(dados.modalidades))) e.preventDefault(); } catch { e.preventDefault(); }
+    try { if (estado() !== salvoEm) e.preventDefault(); } catch { e.preventDefault(); }
   });
-  function normalizar(m) {
-    const o = {};
-    for (const [n, r] of Object.entries(m || {})) { o[n.trim()] = { ouro: String(r.ouro || "").trim(), prata: String(r.prata || "").trim() }; if (String(r.bronze || "").trim()) o[n.trim()].bronze = String(r.bronze).trim(); }
-    return o;
+
+  // Centraliza no ícone, prende entre as bordas (16px) e abre para cima se não couber embaixo.
+  function posicionarDica(info) {
+    const dica = info.querySelector(".dica"), r = info.querySelector(".info-btn").getBoundingClientRect();
+    if (!dica.offsetWidth) return; // fechado
+    const m = 16, w = dica.offsetWidth, h = dica.offsetHeight;
+    const left = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), innerWidth - w - m);
+    let top = r.bottom + 8;
+    if (top + h > innerHeight - m && r.top - 8 - h >= m) top = r.top - 8 - h;
+    dica.style.left = Math.max(m, left) + "px";
+    dica.style.top = Math.max(m, Math.min(top, innerHeight - h - m)) + "px";
   }
+  const infos = [...document.querySelectorAll(".info")];
+  infos.forEach(i => ["mouseenter", "focusin"].forEach(ev => i.addEventListener(ev, () => requestAnimationFrame(() => posicionarDica(i)))));
+  ["scroll", "resize"].forEach(ev => addEventListener(ev, () => infos.forEach(posicionarDica), { passive: true }));
 
   iniciarCampos();
   (async () => {

@@ -129,3 +129,8 @@ Cada modalidade tem sua própria sala no VDO.Ninja, inclusive Feminino e
 Masculino separados (ex.: futsalfeminino e futsalmasculino).
 ATENÇÃO: os links das salas mudaram. Reenvie os links de convidado/OBS
 das modalidades com gênero para quem transmite.
+
+EQUIPES NO ADMIN
+- Seção "Equipes": edite o nome ou use "+ Adicionar equipe" (o ID TIME N é
+  gerado sozinho). Ao renomear, as medalhas já lançadas com o nome antigo
+  passam para o nome novo. "Salvar no GitHub" grava equipes e modalidades.
