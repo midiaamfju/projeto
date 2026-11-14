@@ -136,9 +136,8 @@ EQUIPES NO ADMIN
   passam para o nome novo. "Salvar no GitHub" grava equipes e modalidades.
 
 V11 — MELHORIAS NO SITE
-- Posições no critério olímpico: empatados dividem a posição e a seguinte
-  pula (1º, 2º, 2º, 4º). Se não existir 3º lugar por empate, o pódio mostra
-  "Sem 3º lugar (empate acima)".
+- Posições: empatados dividem a posição e a seguinte NÃO pula
+  (1º, 2º, 2º, 3º). Assim o pódio sempre tem 3º lugar, mesmo com empate.
 - Siglas únicas nos escudos sem imagem (ex.: NOROESTE = NO, NORTE = NT).
 - Barra "X de Y com resultado": conta modalidades que já têm ouro.
 - A abertura aparece em toda visita. Para pular, abra o site com ?intro=0
@@ -147,7 +146,7 @@ V11 — MELHORIAS NO SITE
   bolas, troféu e letras entram em sequência). Elas são geradas a partir de
   img/logo.svg. Se trocar a logo SVG, rode (precisa do Chrome ou Edge):
       node ferramentas/gerar-logo-animada.js
-- No celular o pódio fica um cartão por linha, com o 1º lugar em cima.
+- O pódio fica sempre lado a lado (2º, 1º, 3º), também no celular.
 
 ESCUDOS DAS EQUIPES
 1. Coloque as imagens em img/times/ (PNG ou WEBP quadrado, ~200x200px),

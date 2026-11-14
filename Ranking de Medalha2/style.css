@@ -1878,23 +1878,6 @@ body.sem-bronze .linha .nums {grid-template-columns:repeat(3,64px)}
 .progresso-barra i{display:block;height:100%;width:calc(var(--feito,0) * 100%);border-radius:inherit;background:linear-gradient(90deg,#ffaa40,#ea7937);transition:width .8s cubic-bezier(.2,.8,.2,1)}
 @media(max-width:520px){.progresso{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px}.progresso-texto{justify-content:space-between}.progresso-texto strong{font-size:.9rem}.progresso-barra{flex:none}}
 
-/* Pódio no celular: um cartão por linha, 1º lugar em cima, escudo ao lado do nome */
-@media(max-width:520px){
-  .podio{grid-template-columns:1fr;gap:10px}
-  .podio-1{order:-1}
-  .podio-item{display:grid;grid-template-columns:1fr auto;grid-template-areas:"coroa medalha" "equipes equipes";align-items:center;gap:4px 10px;padding:14px 16px;min-height:0;height:auto}
-  .podio-item .podio-coroa{grid-area:coroa;text-align:left;margin:0;font-size:.72rem}
-  .podio-item .podio-medalha{grid-area:medalha;margin:0;padding:0;font-size:0}
-  .podio-item .podio-medalha-img{width:30px;height:30px}
-  .podio-item .podio-equipes{grid-area:equipes;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;gap:12px 22px;margin:6px 0 0}
-  .podio-item .podio-equipe{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;justify-items:start}
-  .podio-item .podio-equipe+.podio-equipe{border-top:0;padding-top:0}
-  .podio-item .podio-equipe .podio-escudo{grid-row:1 / 3;width:46px;height:46px;margin:0}
-  .podio-1.podio-item .podio-equipe .podio-escudo{width:54px;height:54px}
-  .podio-item .podio-equipe .podio-nome{font-size:1.45rem;text-align:left;line-height:1}
-  .podio-item .podio-equipe .podio-total{font-size:.72rem;margin-top:3px}
-  .podio-item .podio-vazio{padding:6px 0;text-align:left}
-}
 
 /* Pódio sem equipe (empate acima ou ainda a definir): medalha apagada */
 .podio-sem-equipe .podio-medalha{opacity:.4;filter:grayscale(.6)}

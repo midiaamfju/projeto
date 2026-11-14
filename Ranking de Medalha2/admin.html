@@ -594,11 +594,11 @@
       placar.get(id)[cor]++;
     }
     const ord = [...placar.values()].sort((a, b) => b.ouro - a.ouro || b.prata - a.prata || b.bronze - a.bronze || a.nome.localeCompare(b.nome));
-    // Mesmo critério olímpico do site: empatados dividem a posição (1º, 2º, 2º, 4º).
+    // Mesmo critério do site: empatados dividem a posição e a seguinte não pula (1º, 2º, 2º, 3º).
     let pos = 0, anterior = null;
-    $("previa").replaceChildren(...ord.map((p, n) => {
+    $("previa").replaceChildren(...ord.map(p => {
       const tr = document.createElement("tr"), total = p.ouro + p.prata + p.bronze, k = [p.ouro, p.prata, p.bronze].join("/");
-      if (k !== anterior) pos = n + 1;
+      if (k !== anterior) pos++;
       anterior = k;
       if (pos <= 3 && total) tr.className = "podio-" + pos;
       const cel = (v, cls = "") => { const td = document.createElement("td"); td.className = (cls + (v === 0 ? " zero" : "")).trim(); td.textContent = v; tr.append(td); return td; };

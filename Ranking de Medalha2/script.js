@@ -272,9 +272,7 @@ function atualizarDestaques(ordenados) {
       if (!equipes.length) {
         const vazio = document.createElement("div");
         vazio.className = "podio-vazio";
-        // Com empate acima (ex.: dois em 2º), a posição seguinte não existe no critério olímpico.
-        const pulada = ordenados.some(p => p.posicao > posicao && p.total > 0);
-        vazio.textContent = pulada ? `Sem ${posicao}º lugar (empate acima)` : "A definir";
+        vazio.textContent = "A definir";
         item.classList.add("podio-sem-equipe");
         pessoas.appendChild(vazio);
       }
@@ -401,13 +399,13 @@ function render(dados) {
     ((b.ouro ?? 0) - (a.ouro ?? 0)) || ((b.prata ?? 0) - (a.prata ?? 0)) || ((b.bronze ?? 0) - (a.bronze ?? 0)) ||
     String(a.nome).localeCompare(String(b.nome),"pt-BR"));
 
-  // Critério olímpico: mesmos ouro/prata/bronze = mesma posição, e a seguinte pula
-  // os empatados (1º, 2º, 2º, 4º). Ordem alfabética só organiza visualmente os empatados.
+  // Mesmos ouro/prata/bronze = mesma posição, e a seguinte NÃO pula (1º, 2º, 2º, 3º),
+  // para o pódio sempre ter 3º lugar mesmo com empate. Ordem alfabética só organiza os empatados.
   let ultimaPontuacao = null;
   let ultimaPosicao = 0;
-  ordenados.forEach((equipe, indice) => {
+  ordenados.forEach(equipe => {
     const pontuacao = [Number(equipe.ouro || 0), Number(equipe.prata || 0), Number(equipe.bronze || 0)].join("/");
-    if (pontuacao !== ultimaPontuacao) ultimaPosicao = indice + 1;
+    if (pontuacao !== ultimaPontuacao) ultimaPosicao++;
     equipe.posicao = ultimaPosicao;
     ultimaPontuacao = pontuacao;
   });
